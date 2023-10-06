@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.video.calcioplus" name="Calcio+" version="0.1.0" provider-name="Biski">
+<addon id="script.video.calcioplus" name="CALCIO+" version="0.1.0" provider-name="Freeteam">
   <requires>
-    <!--import addon="xbmc.python" version="2.1.0"/-->
+    <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.dateutil" />
-    <import addon="script.module.six" />
+	<import addon="script.module.six" />
 	<import addon="script.module.pyxbmct" />
 	<import addon="script.module.requests" />
   </requires>
-  <extension point="xbmc.python.pluginsource" library="default.py">
-    <provides>video</provides>
+  <extension point="xbmc.python.script" library="default.py">
+	<provides>video</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">Calcio+</summary>
@@ -21,7 +21,6 @@
       - compatible with Kodi18.x - 19.x - 20.x version
       - fix liveon resolver
     </news>
-
     <assets>
       <icon>icon.png</icon>
       <fanart>fanart.jpg</fanart>

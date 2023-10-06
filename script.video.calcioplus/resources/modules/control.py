@@ -37,9 +37,10 @@ elif six.PY3:
 else:
     translatePath = xbmc.translatePath
 
-syshandle = int(argv[1])
+#syshandle = int(argv[1])#vb
+syshandle=0
 sysaddon = argv[0]
-params = dict(parse_qsl(argv[2].replace('?', '')))
+#params = dict(parse_qsl(argv[2].replace('?', '')))
 
 integer = 1000
 lang = xbmcaddon.Addon().getLocalizedString

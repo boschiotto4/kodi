@@ -1,0 +1,1642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+	<controls>
+		<control type="image" id="12">
+			<left>50</left>
+			<top>20</top>
+			<width>180</width>
+			<height>60</height>
+			<texture>icons/logo.png</texture>
+			<visible>true</visible>
+		</control>
+
+		<control type="grouplist" id="17">
+		  <description>My first group list control</description>
+		  <left>50</left>
+		  <top>100</top>
+		  <width>1230</width>
+		  <height>600</height>
+		  <itemgap>10</itemgap>
+		  <pagecontrol>25</pagecontrol>
+		  <scrolltime tween="sine" easing="out">200</scrolltime>
+		  <orientation>vertical</orientation>
+		  <usecontrolcoords>false</usecontrolcoords>
+		  <visible>true</visible>
+		  <onup>2</onup>
+		  <ondown>3</ondown>
+		  <onleft>1</onleft>
+		  <onright>1</onright>
+		  <align>right</align>
+		<!-- 1 Row -->  
+		<control type="list" id="10">
+			<left>50</left>
+			<top>0</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 2 Row -->
+		<control type="list" id="20">
+			<left>50</left>
+			<top>220</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 3 Row -->
+		<control type="list" id="30">
+			<left>50</left>
+			<top>440</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 4 Row -->
+		<control type="list" id="40">
+			<left>50</left>
+			<top>660</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 5 Row -->
+		<control type="list" id="50">
+			<left>50</left>
+			<top>880</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 6 Row -->
+		<control type="list" id="60">
+			<left>50</left>
+			<top>1100</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 7 Row -->
+		<control type="list" id="70">
+			<left>50</left>
+			<top>1330</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 8 Row -->
+		<control type="list" id="80">
+			<left>50</left>
+			<top>1550</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 9 Row -->
+		<control type="list" id="90">
+			<left>50</left>
+			<top>1770</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+		<!-- 10 Row -->
+		<control type="list" id="100">
+			<left>50</left>
+			<top>1990</top>
+   		    <orientation>horizontal</orientation>
+			<width>1230</width>
+			<height>220</height>
+			<itemlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+			</itemlayout>
+			<focusedlayout width="385" height="220">
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>icons/b1.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Art(thumb)]</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>130</top>
+					<width>380</width>
+					<height>90</height>
+					<colordiffuse>AA000000</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>190</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>DEFFFFFF</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>316</left>
+					<top>156</top>
+					<width>64</width>
+					<height>64</height>
+					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>130</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Title]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>160</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.OriginalTitle]</label>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>190</top>
+					<height>30</height>
+					<width>300</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Label]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>220</height>
+					<texture>$INFO[ListItem.Label2]</texture>
+					<visible>true</visible>
+				</control>
+			</focusedlayout>
+		</control>
+	
+	</control>
+	<!-- Fade -->
+		<control type="image">
+			<left>0</left>
+			<top>0</top>
+			<width>80</width>
+			<height>720</height>
+			<texture>icons/left.png</texture>
+		</control>
+		<control type="image">
+			<left>1200</left>
+			<top>0</top>
+			<width>80</width>
+			<height>720</height>
+			<texture>icons/right.png</texture>
+		</control>
+		<control type="image">
+			<left>0</left>
+			<top>640</top>
+			<width>1280</width>
+			<height>80</height>
+			<texture>icons/down.png</texture>
+		</control>
+		<control type="image">
+			<left>0</left>
+			<top>0</top>
+			<width>1280</width>
+			<height>80</height>
+			<texture>icons/up.png</texture>
+		</control>
+	</controls>
+</window>

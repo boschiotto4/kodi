@@ -16,10 +16,14 @@ import os, sys
 import xbmcplugin
 
 from urllib.parse import urlparse
-
 from resources.modules import control, client
+from dateutil.parser import parse
+from dateutil.tz import gettz
+from dateutil.tz import tzlocal
 
 ADDON = xbmcaddon.Addon()
+#CWD = ADDON.getAddonInfo('path').decode('utf-8')
+
 ADDON_DATA = ADDON.getAddonInfo('profile')
 ADDON_PATH = ADDON.getAddonInfo('path')
 DESCRIPTION = ADDON.getAddonInfo('description')
@@ -31,27 +35,21 @@ VERSION = ADDON.getAddonInfo('version')
 Lang = ADDON.getLocalizedString
 
 #Dialog = xbmcgui.Dialog()
+base = xbmcgui.Window(xbmcgui.getCurrentWindowId())
 
 vers = VERSION
 ART = ADDON_PATH + "/resources/icons/"
 
 BASEURL = 'https://my.livesoccer.sx/'
 Live_url = 'https://my.livesoccer.sx/'
-Alt_url = 'https://liveon.sx/program'#'https://1.livesoccer.sx/program'
+Alt_url = 'https://liveon.sx/program'     #'https://1.livesoccer.sx/program'
 headers = {'User-Agent': client.agent(),
            'Referer': BASEURL}
 
-from dateutil.parser import parse
-from dateutil.tz import gettz
-from dateutil.tz import tzlocal
-
-# reload(sys)
-# sys.setdefaultencoding("utf-8")
-
-accepted_league = ['italy','england','spain','germany','france','nederlands']
+accepted_league = ['italy','england','spain','germany','france','nederlands','UEFA Champions','UEFA Europa','UEFA Conference']
 
 STATE = 'close'
-addon_handle = int(sys.argv[1])
+#addon_handle = int(sys.argv[1])
 ACTION_PREVIOUS_MENU = 10
 ACTION_BACK_MENU = 92
 ACTION_SELECT_ITEM = 7
@@ -69,14 +67,16 @@ ACTION_MOUSE_DOUBLE_CLICK = 103
 
 ADDON_ACTION_TOUCH_TAP  = 401
 
+barItems = []    
+
 # Page grid
 offset_page_top = 140
-offset_page_left = 80
+offset_page_left = 50
 page_blur = 130
 alpa = '0x75FFFFFF'
 
 # Item
-width = 370
+width = 380
 height = 220
 offset_w = 5
 offset_h = 5
@@ -84,233 +84,129 @@ offset_h = 5
 rows_item_count = []
 
 item_selected = [0, 0]
-rows = []
 data_rows = []
 
 row_items_count = []
 id_row = 0
+item_sel = 0
 
-base = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+ui = None
 
-gui_images = []
-gui_images_used = 0
-def get_available_gui_image(x, y, width, height, filename=ART+'empty.png', aspectRatio=1, colorDiffuse='0xFFFFFFFF'):
-    global gui_images_used
-    global gui_images
-    gui_images_used = gui_images_used + 1
-    ret = gui_images[gui_images_used]
-    ret.setPosition(x,y)
-    ret.setWidth(width)
-    ret.setHeight(height)
-    ret.setImage(filename)
-    ret.setColorDiffuse(colorDiffuse)
-    #ret.setAspectRatio(aspectRatio)
-    return ret
-
-gui_labels_s = []
-gui_labels_s_used = 0
-def get_available_gui_label_s(x, y, width, height, text, font='font10', textColor='0xFF000000'):
-    global gui_labels_s_used
-    global gui_labels_s
-    gui_labels_s_used = gui_labels_s_used + 1
-    ret = gui_labels_s[gui_labels_s_used]
-    ret.setPosition(x,y)
-    ret.setWidth(width)
-    ret.setHeight(height)
-    ret.setLabel(text)
-    return ret
- 
-gui_labels_w = []
-gui_labels_w_used = 0
-def get_available_gui_label_w(x, y, width, height, text, font='font10', textColor='0xFF000000'):
-    global gui_labels_w_used
-    global gui_labels_w
-    gui_labels_w_used = gui_labels_w_used + 1
-    ret = gui_labels_w[gui_labels_w_used]
-    ret.setPosition(x,y)
-    ret.setWidth(width)
-    ret.setHeight(height)
-    ret.setLabel(text)
-    return ret
-  
-# Main code
-class Main(pyxbmct.BlankFullWindow):
-    def __init__( self):
-        # Call the base class' constructor.
-        super(Main, self).__init__()
-
-        global base
-        global gui_images
+# add a class to create your xml based window
+class GUI(xbmcgui.WindowXML):
+    # [optional] this function is only needed of you are passing optional data to your window
+    def __init__(self, *args, **kwargs):
+        # get the optional data and add it to a variable you can use elsewhere in your script
+        self.data = kwargs['optional1']
         
-        base = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+    # until now we have a blank window, the onInit function will parse your xml file
+    def onInit(self):
+        self.gui_rows = []
+        self.lists = []
+        self.data = []
+        # define two temporary lists where we are going to add our the listitems to
+
+        # create and add some items to the first temporary list
+        for r in range(0, 10):
+            empty_list = []
+            empty_data = []
+            self.lists.append(empty_list)
+            self.data.append(empty_data)
+            self.getControl(r * 10 + 10).setVisible(False)
+            self.gui_rows.append(self.getControl(r * 10 + 10))
+
+        #xbmc.sleep(100)
+        # this puts the focus on the first listitem in the first container
+
+        xbmc.log('boxss ' + str(len(self.lists)),xbmc.LOGERROR)
         
-        self.setGeometry(1280, 720, 1, 1)
-
-        self.main_bg = xbmcgui.ControlImage(0, 0, 1280, 720, ART + 'bg.png')
-        self.addControl(self.main_bg)
-        
-        for x in range(0, 150):
-            dummy = xbmcgui.ControlImage(0, 0, 2, 2, filename=ART+'empty.png') #, aspectRatio=1)
-            gui_images.append(dummy)
-            self.addControl(dummy)
-
-        for x in range(0, 150):
-            dummy = xbmcgui.ControlLabel(0, 0, 2, 2, '', textColor='0xFF000000', font='font10')
-            gui_labels_s.append(dummy)
-            self.addControl(dummy)
-
-        for x in range(0, 150):
-            dummy = xbmcgui.ControlLabel(0, 0, 2, 2, '', textColor='0xFFFFFFFF', font='font10')
-            gui_labels_w.append(dummy)
-            self.addControl(dummy)
-            
-        #self.setFocus(self.main_bg)
-    #def onInit(self):
-    #    xbmc.log('do Modal', xbmc.LOGERROR)
-
-    def onAction(self, action):
-        super(Main, self).onAction(action)
-        #xbmc.log('foc', xbmc.LOGERROR)
-        #pyxbmct.BlankFullWindow.onAction(self, action)
-
-        if action.getId() == 107:
-#            self.close()
-            closeAddon()     
-        if action.getId() == ACTION_PREVIOUS_MENU:
-#            self.close()
-            closeAddon()     
-        if action.getId() == ACTION_PREVIOUS_MENU:
-#            self.close()
-            closeAddon()   
-        elif action.getId() == ACTION_BACK_MENU:
-#            self.close()
-            closeAddon()   
-        elif action.getId() == pyxbmct.ACTION_NAV_BACK:
-#            self.close()
-            closeAddon()   
-        elif action.getId() in (ADDON_ACTION_MOUSE_LEFT_CLICK, ADDON_ACTION_MOUSE_MIDDLE_CLICK, ADDON_ACTION_MOUSE_RIGHT_CLICK, ACTION_SELECT_ITEM, ACTION_MOUSE_DOUBLE_CLICK, ADDON_ACTION_TOUCH_TAP):
-            get_stream(rows[item_selected[1]][item_selected[0]].getEventData().getStreams())   
-        #else:
-        #    pyxbmct.BlankFullWindow.onAction(self, action)
-
-    def onClick(self, control_id):
-        get_stream(rows[item_selected[1]][item_selected[0]].getEventData().getStreams())   
-
-    
-class Quad():
-    def __init__( self, x, y, event_data):
-        
-        # Init GUI quad
-        global mydisplay
-        self.data = event_data
-        self.row_offset = 0
-
-        self.g_items = []
-        logoChampSize = 64
-        logoLeague = 56
-        wBarHeight = 30
-        
-        self.bg = get_available_gui_image(x, y, width, height, filename=ART+'b1.png', aspectRatio=1)# xbmcgui.ControlImage(x, y, width, height, filename=ART+'b1.png', aspectRatio=1)
-        #mydisplay.addControl(self.bg)
-        self.g_items.append(self.bg)
-
-        self.selected = xbmcgui.ControlImage(x, y, width, height, filename=ART+'b2.png')
-        self.selected.setVisible(False)
-        mydisplay.addControl(self.selected)
-        self.g_items.append(self.selected)
-
-        whiteBar = get_available_gui_image(x, y + height - wBarHeight, width - logoChampSize, wBarHeight, filename=ART+'bw.png')
-        #mydisplay.addControl(whiteBar)
-        self.g_items.append(whiteBar)
-
-        blackBack = get_available_gui_image(x, y + height - wBarHeight - 60, width, 60, filename=ART+'bw.png', colorDiffuse='0xBB000000')
-        #mydisplay.addControl(blackBack)
-        self.g_items.append(blackBack)
-
-        whiteBack = get_available_gui_image(x + width - logoChampSize, y + height - logoChampSize, logoChampSize, logoChampSize, filename=ART+'bw.png')
-        #mydisplay.addControl(whiteBack)
-        self.g_items.append(whiteBack)
-
-        matchShadow = get_available_gui_label_s(x + 10 - 1, y + height - 87 + 1, width - 20, 30, event_data.getTeams().upper(), font='font10', textColor='0xFF000000') #xbmcgui.ControlLabel(x + 10 - 1, y + height - 87 + 1, width - 20, 30, event_data.getTeams().upper(), font='font10', textColor='0xFF000000')
-        #mydisplay.addControl(matchShadow)
-        self.g_items.append(matchShadow)
-        
-        match = get_available_gui_label_w(x + 10, y + height - 87, width - 20, 30, event_data.getTeams().upper(), font='font10')
-        #mydisplay.addControl(match)
-        self.g_items.append(match)
-
-        hour = get_available_gui_label_w(x + 10, y + height - 60, width - 20, 30, event_data.getFtime().upper(), font='font10')
-        #mydisplay.addControl(hour)
-        self.g_items.append(hour)
-
-        league = get_available_gui_label_s(x + 10, y + height - 27, width - 20, 30, '', font='font10', textColor='0xFF000000')
-        self.onlyleague = event_data.getLname()
-        for r in accepted_league:
-            self.onlyleague = self.onlyleague.lower().replace(r, '')
-        league.setLabel(self.onlyleague.strip().upper())
-        #mydisplay.addControl(league)
-        self.g_items.append(league)
-                
-        self.logo = get_available_gui_image(x + width - int(logoChampSize/2 + logoLeague/2), y + height - int(logoChampSize/2 + logoLeague/2), logoLeague, logoLeague, filename= event_data.getLogo_league(), colorDiffuse='0xFF000000', aspectRatio=2) #ART+'bundesliga.png')
-        #mydisplay.addControl(self.logo)
-        self.g_items.append(self.logo)
- 
-    def applyContextualImages(self):
-        # Apply contextual image if present
-        urls = []
-        
-        a = urlparse(self.data.getLogo_league())
-        #xbmc.log(str(a.path), xbmc.LOGERROR)
-        if 'football' in a.path:
-            urls = searchImageByDesc(self.data.getTeams() + ' ' + self.data.getLname() + ' site:goal.com')
-        else:
-            urls = searchImageByDesc(self.data.getTeams() + ' ' + self.data.getLname())
-        if urls != None and len(urls) > 0:
-            if is_url_image(urls[0]):
-                self.bg.setImage(urls[0])
-            #elif is_url_image(urls[1]):    
-            #    self.bg.setImage(urls[1])
-
-        # Apply contextual image if present
-        urls = searchImageByDesc(self.onlyleague + ' logo png',True)
-        if urls != None and len(urls) > 0:
-            self.logo.setImage(urls[0])
-            self.logo.setColorDiffuse('0xFFFFFFFF')
+        #self.setFocus(gui_rows[0])
         pass
 
-    def getEventData(self):
-        return self.data
-        
-    def setSelected(self, state):
-        self.selected.setVisible(state)
-        
-    def moveRight(self):
-        for i in self.g_items:
-            i.setPosition(i.getX() + width + offset_w, i.getY())
-
-    def moveLeft(self):
-        for i in self.g_items:
-            i.setPosition(i.getX() - width - offset_w, i.getY())
-
-    def moveUp(self):
-        for i in self.g_items:
-            i.setPosition(i.getX(), i.getY() - (height + offset_h))
-
-    def moveDown(self):
-        for i in self.g_items:
-            i.setPosition(i.getX(), i.getY() + (height + offset_h))
+    def isInited(self):
+        if len(self.lists) < 10:
+            return False
+        return True
+        pass
+    def getVisibleRow(self):
+        c = 0
+        for r in range(0, 10):
+            if self.gui_rows[r].isVisible():
+                c = c + 1
+        return c
     
-    def getX(self):
-        return self.bg.getX()
+    def addQuad(self, row, _data):      
+        #for i in range(0, 10):
+        listitem = xbmcgui.ListItem()
+        listitem.setInfo( type="Video", infoLabels={ "Title": "" + _data.getTeams().upper() + "", "OriginalTitle": "" + _data.getFtime() + "", "Album": "" + _data.getBaseImage() + "" }   )
+        
+        _data.setOnlyLeagueName(_data.getLname())
+        for r in accepted_league:
+            _data.setOnlyLeagueName(_data.getOnlyLeagueName().lower().replace(r, ''))
+        _data.setOnlyLeagueName(_data.getOnlyLeagueName().strip().upper())
+        
+        listitem.setLabel(_data.getOnlyLeagueName())
+        self.data[row].append(_data)
+        self.lists[row].append(listitem)
+        self.gui_rows[row].addItem(listitem) 
+        self.gui_rows[row].setVisible(True)
+        pass
 
-    def getY(self):
-        return self.bg.getY()
+    def applyContextualImages(self):
+        # Apply contextual image if present   
+        for r in range(0, len(self.data)):
+            for i in range(0, len(self.data[r])):
+                urls = []
+                
+                mydata = self.data[r][i]
+                
+                a = urlparse(mydata.getLogo_league())
+                #xbmc.log(str(a.path), xbmc.LOGERROR)
+                if 'football' in a.path:
+                    urls = searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLname() + ' site:goal.com')
+                else:
+                    urls = searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLname())
+                if urls != None and len(urls) > 0:
+                    if is_url_image(urls[0]):
+                        self.lists[r][i].setArt({ 'thumb' : urls[0]})
 
-    def getH(self):
-        return self.bg.getHeight()
-         
-    def getW(self):
-        return self.bg.getWidth()
+                # Apply contextual image if present
+                urls = searchImageByDesc(mydata.getOnlyLeagueName() + ' logo png',True)
+                if urls != None and len(urls) > 0:
+                    self.lists[r][i].setArt({ 'clearlogo' : urls[0]})
+                    #self.lists[r][i].setColorDiffuse('0xFFFFFFFF')
+        pass
+        
+    def onAction(self, action):
+        global id_row
+
+        if action.getId() == xbmcgui.ACTION_MOVE_LEFT:
+            move_left()
+        elif action.getId() == xbmcgui.ACTION_MOVE_RIGHT:
+            move_right()
+        elif action.getId() == xbmcgui.ACTION_MOVE_UP:
+            move_up()
+        elif action.getId() == xbmcgui.ACTION_MOVE_DOWN:
+            move_down()
+        elif action.getId() in (ADDON_ACTION_MOUSE_LEFT_CLICK, ADDON_ACTION_MOUSE_MIDDLE_CLICK, ADDON_ACTION_MOUSE_RIGHT_CLICK, ACTION_SELECT_ITEM, ACTION_MOUSE_DOUBLE_CLICK, ADDON_ACTION_TOUCH_TAP):
+            get_stream(self.data[item_selected[1]][item_selected[0]].getStreams()) 
+        else:
+            super(GUI, self).onAction(action)
+        pass
+
+    def onFocus(self, controlId):
+        global id_row       
+        #super(GUI, self).onFocus(controlId)
+        #return 
+        for r in range(0, len(self.lists)):
+            for i in range(0, len(self.lists[r])):
+                if controlId == r * 10 + 10:
+                    id_row = r
+                self.lists[r][i].setLabel2('icons/empty.png')
+  
+        for i in range(0, len(self.lists[id_row])):
+            self.lists[id_row][i].setLabel2('icons/b2.png')
+        pass
 
 
 class EventData():
@@ -320,17 +216,25 @@ class EventData():
         self.lname = _lname
         self.streams = _streams
         self.logo_league = _logo_league
+        self.onlyleague = ''
         
     def getTeams(self):
         return self.teams
     def getFtime(self):
         return self.ftime
+    def getBaseImage(self):
+        return 'icons/b1.png'
     def getLname(self):
         return self.lname
     def getStreams(self):
         return self.streams
     def getLogo_league(self):
         return self.logo_league
+    def setOnlyLeagueName(self, n):
+        self.onlyleague = n
+
+    def getOnlyLeagueName(self):
+        return self.onlyleague
 
 # Engine 
 def is_url_image(image_url):
@@ -371,7 +275,8 @@ def searchImageByDesc(desc,isLogo=False):
                     'safesearch': 1,
                     'locale': 'it_IT',
                     'offset': 0,
-                    'device': 'desktop'
+                    'device': 'desktop',
+                    'freshness': 'year'
                 },
                 headers={
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64 rv:94.0) Gecko/20100101 Firefox/94.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
@@ -387,66 +292,45 @@ def searchImageByDesc(desc,isLogo=False):
     
 # GUI EVENTs
 def move_left():
-    item_selected[0] = item_selected[0] - 1 #new_r_offset# - old_r_offset
+    global item_sel
+    item_selected[0] = item_selected[0] - 1
 
+    item_sel = item_sel - 1
     refresh_selection()
     pass
 
 def move_right():
-    # Get the row offset (if row is shifted to center content)
-    #new_r_offset = rows[item_selected[1]][0].row_offset # Use the first item of the list to get the row offset
-    item_selected[0] = item_selected[0] + 1 #new_r_offset# - old_r_offset
-
-##    # Get the row offset (if row is shifted to center content)
-##    old_r_offset = rows[item_selected[1]][0].row_offset # Use the first item of the list to get the row offset
-##    # Get the row offset (if row is shifted to center content)
-##    n_r_offset = rows[item_selected[1]][0].row_offset # Use the first item of the list to get the row offset
+    global item_sel
+    item_selected[0] = item_selected[0] + 1
+    item_sel = item_sel + 1
     
     refresh_selection()
     pass
 
 def move_up():
-    old_r_offset = rows[item_selected[1]][0].row_offset # Use the first item of the list to get the row offset
-
     item_selected[1] = item_selected[1] - 1
-    if item_selected[1] < 0:
-        item_selected[1] = 0
-
-    new_r_offset = rows[item_selected[1]][0].row_offset # Use the first item of the list to get the row offset
-
-    item_selected[0] = item_selected[0] + new_r_offset - old_r_offset
 
     refresh_selection()
     pass
 
 def move_down():
-    old_r_offset = rows[item_selected[1]][0].row_offset # Use the first item of the list to get the row offset
-
     item_selected[1] = item_selected[1] + 1
-    if item_selected[1] > len(rows) - 1:
-        item_selected[1] = len(rows) - 1
-
-    new_r_offset = rows[item_selected[1]][0].row_offset # Use the first item of the list to get the row offset
-
-    item_selected[0] = item_selected[0] + new_r_offset - old_r_offset
     
     refresh_selection()
     pass
-    
-def initializeGUI():
-    global mydisplay
-    mydisplay = Main()
-
-    pass
+ 
 
 def refresh_selection():
-    if len(rows) <= 0:
+    global item_sel
+    global ui
+
+    if len(row_items_count) <= 0:
         return
-        
+
     if item_selected[1] < 0:
         item_selected[1] = 0
-    if item_selected[1] > len(rows) - 1:
-        item_selected[1] = len(rows) - 1
+    if item_selected[1] > ui.getVisibleRow() - 1:
+        item_selected[1] = ui.getVisibleRow() - 1
 
     if item_selected[0] < 0:
         item_selected[0] = 0
@@ -456,201 +340,49 @@ def refresh_selection():
     if item_selected[0] > row_items_count[item_selected[1]] - 1:
         item_selected[0] = row_items_count[item_selected[1]] - 1
 
-    # Reset selection
-    for r in rows:
-        for x in r:
-            x.setSelected(False)
-
-    rows[item_selected[1]][item_selected[0]].setSelected(True)
-
-    if rows[item_selected[1]][item_selected[0]].getX() + rows[item_selected[1]][item_selected[0]].getW() > 1280:
-        # Update the row offset
-        rows[item_selected[1]][0].row_offset = rows[item_selected[1]][0].row_offset + 1 # Use the first item of the list to get the row offset
-        # Move the row
-        for r in rows[item_selected[1]]:
-            r.moveLeft()
-
-    if rows[item_selected[1]][item_selected[0]].getX() < 0:
-        # Update the row offset
-        rows[item_selected[1]][0].row_offset = rows[item_selected[1]][0].row_offset - 1 # Use the first item of the list to get the row offset
-        # Move the row
-        for r in rows[item_selected[1]]:
-            r.moveRight()
-            
-    # Page scroll needed?
-    if rows[item_selected[1]][item_selected[0]].getY() + rows[item_selected[1]][item_selected[0]].getH() > 720:
-        # Move the row
-        for rr in rows:
-            for r in rr:
-                r.moveUp()
-
-    # Page scroll needed?
-    if rows[item_selected[1]][item_selected[0]].getY() < 0:
-        # Move the row
-        for rr in rows:
-            for r in rr:
-                r.moveDown()
-
-    pass
-
-def closeAddon():
-    global mydisplay
-    mydisplay.close()
+    focused_row = (item_selected[1]) * 10 + 10
+    if item_sel < 0:
+        item_sel = 0
     
-    #del mydisplay
+    if item_sel > 2:
+        item_sel = 2
+    xbmc.executebuiltin('Control.SetFocus('+ str(focused_row) + ', ' + str(item_sel) + ')')
+    #xbmc.log('p:' + str(len(row_items_count)),xbmc.LOGERROR)
     
-    #xbmc.executebuiltin('Dialog.Close(all)')
-    pass
-
-logo = 0
-    
-def postEvents():
-    global mydisplay
-    global logo
-      
-    addTopBar()
-    
-    mydisplay.connect(pyxbmct.ACTION_MOVE_RIGHT, move_right)
-    mydisplay.connect(pyxbmct.ACTION_MOVE_LEFT, move_left)
-    mydisplay.connect(pyxbmct.ACTION_MOVE_UP, move_up)
-    mydisplay.connect(pyxbmct.ACTION_MOVE_DOWN, move_down)
-
-    mydisplay.connect(ACTION_GESTURE_SWIPE_RIGHT, move_right)
-    mydisplay.connect(ACTION_GESTURE_SWIPE_LEFT, move_left)
-    mydisplay.connect(ACTION_GESTURE_SWIPE_UP, move_up)
-    mydisplay.connect(ACTION_GESTURE_SWIPE_DOWN, move_down)
-
-    #mydisplay.connect(pyxbmct.ACTION_NAV_BACK, mydisplay.close)
-    refresh_selection()
-    
-    start_mouse_handler()
-    
-    xbmc.executebuiltin('Dialog.Close(busydialog)')
-    #xbmc.executebuiltin("Dialog.Close(all)")
-    
-    global base
-    base.close()
-    del base
-    
-    mydisplay.doModal()
-    pass
-
-barItems = []    
-def addTopBar():
-    global mydisplay
-    # BAR
-    # Add border above GUI
-    barItems.append(xbmcgui.ControlImage(0, 0, page_blur, 720, filename=ART+'left.png', colorDiffuse=alpa))
-    barItems.append(xbmcgui.ControlImage(1280 - page_blur, 0, page_blur, 720, filename=ART+'right.png', colorDiffuse=alpa))
-    barItems.append(xbmcgui.ControlImage(0, 720 - page_blur, 1280, page_blur, filename=ART+'down.png', colorDiffuse=alpa))
-    barItems.append(xbmcgui.ControlImage(0, 0, 1280, 160, filename=ART+'toph.png'))
-    
-    barItems.append(xbmcgui.ControlImage(70, 25, 190, 70, filename=ART+'logo.png', colorDiffuse='0xFFFFFFFF'))
-    
-    # Icons BAR
-    icon_size = 64
-    barItems.append(xbmcgui.ControlImage(1280 - 100 - (icon_size + 10) * 4, 30, icon_size, icon_size, filename=ART+'icon-live.png', colorDiffuse='0xFFFFFFFF'))
-
-    selected_0 = xbmcgui.ControlImage(1280 - 100 - (icon_size + 10) * 4, 30 + icon_size, icon_size, 8, filename=ART+'b3.png', colorDiffuse='0xFFFFFFFF')
-    selected_0.setVisible(True)
-    mydisplay.addControl(selected_0)
-
-    barItems.append(xbmcgui.ControlImage(1280 - 100 - (icon_size + 10) * 3, 30, icon_size, icon_size, filename=ART+'icon-serie-a.png', colorDiffuse='0xFFFFFFFF'))
-
-    selected_1 = xbmcgui.ControlImage(1280 - 100 - (icon_size + 10) * 3, 30 + icon_size, icon_size, 8, filename=ART+'b3.png', colorDiffuse='0xFFFFFFFF')
-    selected_1.setVisible(False)
-    mydisplay.addControl(selected_1)
-
-    barItems.append(xbmcgui.ControlImage(1280 - 100 - (icon_size + 10) * 2, 30, icon_size, icon_size, filename=ART+'icon-champions-league.png', colorDiffuse='0xFFFFFFFF'))
-
-    selected_2 = xbmcgui.ControlImage(1280 - 100 - (icon_size + 10) * 2, 30 + icon_size, icon_size, 8, filename=ART+'b3.png', colorDiffuse='0xFFFFFFFF')
-    selected_2.setVisible(False)
-    mydisplay.addControl(selected_2)
-
-    barItems.append(xbmcgui.ControlImage(1280 - 100 - (icon_size + 10) * 1, 30, icon_size, icon_size, filename=ART+'icon-europa-league.png', colorDiffuse='0xFFFFFFFF'))
-
-    selected_3 = xbmcgui.ControlImage(1280 - 100 - (icon_size + 10) * 1, 30 + icon_size, icon_size, 8, filename=ART+'b3.png', colorDiffuse='0xFFFFFFFF')
-    selected_3.setVisible(False)
-    mydisplay.addControl(selected_3)
-
-    for b in barItems:
-        mydisplay.addControl(b)
-    pass
-
-def removeTopBar():
-    global barItems
-    global mydisplay
-    for b in barItems:
-        mydisplay.removeControl(b)
     pass
  
 import threading
 import time
 
-#Routine that processes whatever you want as background
-def YourLedRoutine():    
-    # ADD TO GUI
-    i_r = 0
-    for r in data_rows:
-        gui_row = []
-        i_i = 0
-        for i in r:
-            # Accept only selected events
-            accepted = False
-            for a in accepted_league:
-                if a in i.getLname().lower() and 'football' in i.getLogo_league().lower():
-                    accepted = True
-                    break
-            if accepted:
-                gui_row.append( Quad(offset_page_left + (width + offset_w) * (i_i), offset_page_top + (height + offset_h) * i_r, i) )
-                i_i = i_i + 1
-        if (len(gui_row) > 0):
-            rows.append(gui_row)
-            row_items_count.append((i_i))
-            i_r = i_r + 1
-    
-    #removeTopBar()
-    #addTopBar()
-    
-    for r in rows:
-        for i in r:
-            i.applyContextualImages()
-
-#    global logo
-#    logo.setIndex(0)
-
-#    while 1:
-#        #print 'tick'
-#        #pos = xbmcgui.getMousePosition()
-#        for r in rows:
-#            for i in r:
-#                if pos.X > i.getX() and pos.X < i.getX() + i.getW() and pos.Y > i.getY() and pos.Y < i.getY() + i.getH():
-#                    i.setSelected(True)
-#                    refresh_selection()
-#        time.sleep(1)
-
-def start_mouse_handler():
-    t1 = threading.Thread(target=YourLedRoutine)
+def load_quads():
+    t1 = threading.Thread(target=load_quads_backgroundWorker)
     #Background thread will finish with the main program
     t1.setDaemon(True)
-    #Start YourLedRoutine() in a separate thread
+    #Start load_quads_backgroundWorker() in a separate thread
     t1.start()
     #You main program imitated by sleep
     #time.sleep(5)
     pass
    
-#######################################
-# Time and Date Helpers
-#######################################
-try:
-    local_tzinfo = tzlocal()
-    locale_timezone = json.loads(xbmc.executeJSONRPC(
-        '{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "locale.timezone"}, "id": 1}'))
-    if locale_timezone['result']['value']:
-        local_tzinfo = gettz(locale_timezone['result']['value'])
-except:
-    pass
 
+#Routine that processes whatever you want as background
+def load_quads_backgroundWorker(): 
+    global ui
+    global row_items_count
+
+    # Wait for gui init
+    xbmc.sleep(2000)
+    
+    # ADD TO GUI the quads
+    row = 0
+    for r in data_rows:
+        for i in r: 
+            ui.addQuad(row, i)
+        row_items_count.append(len(r))
+        row = row + 1
+
+    ui.applyContextualImages()
+    pass
 
 def convDateUtil(timestring, newfrmt='default', in_zone='UTC'):
     if newfrmt == 'default':
@@ -768,7 +500,6 @@ def get_events(url):  # 5
     #xbmc.log(url, xbmc.LOGERROR)
 
     id_row = 0
-    global rows
     global data_rows
 
     data = client.request(url)
@@ -1317,7 +1048,7 @@ def addDir(name, url, mode, iconimage, fanart, description):
 
 def get_params():
     param = []
-    paramstring = sys.argv[2]
+    paramstring = [] #sys.argv[2]
     if len(paramstring) >= 2:
         params = sys.argv[2]
         cleanedparams = params.replace('?', '')
@@ -1331,77 +1062,124 @@ def get_params():
     return param
 
 
-params = get_params()
-url = BASEURL
-name = NAME
-iconimage = ICON
-mode = None
-fanart = FANART
-description = DESCRIPTION
-query = None
-### 
-### try:
-###     url = unquote_plus(params["url"])
-### except:
-###     pass
-### try:
-###     name = unquote_plus(params["name"])
-### except:
-###     pass
-### try:
-###     iconimage = unquote_plus(params["iconimage"])
-### except:
-###     pass
-### try:
-###     mode = int(params["mode"])
-### except:
-###     pass
-### try:
-###     fanart = unquote_plus(params["fanart"])
-### except:
-###     pass
-### try:
-###     description = unquote_plus(params["description"])
-### except:
-###     pass
-### try:
-###     query = unquote_plus(params["query"])
-### except:
-###     pass
-### 
-### print(str(ADDON_PATH) + ': ' + str(VERSION))
-### print("Mode: " + str(mode))
-### print("URL: " + str(url))
-### print("Name: " + str(name))
-### print("IconImage: " + str(iconimage))
-### #########################################################
-### 
+def set_dummy_data():
+    for r in range(0,5):
+        row = []
+        for i in range(0,5):
+            row.append( EventData(r * 10 + i, "teams", "ftime",  "italy serie a", "streams", 'www.dummy.com/getpagedummy/football/football.png' ) )
+        data_rows.append(row)
+    pass
+    
+def postEvents(): 
+    global ui
+    xbmc.executebuiltin('Dialog.Close(busydialog)')
+    
+    global base
+    base.close()
+    del base
+    
+    ui = GUI('script-testwindow.xml', ADDON_PATH, 'default', '720p', False, optional1='some data')
 
-#try:
-if mode == 999: #None:
-    Main_menu()
-elif mode == 3:
-    sports_menu()
-elif mode == 2:
-    leagues_menu()
-elif mode == None:
-    # Init display window object
-    initializeGUI()
-    get_events(Live_url)
-    postEvents()
-    mode = 21
-elif mode == 4:
-    get_stream(url)
-elif mode == 10:
-    Open_settings()
-elif mode == 14:
-    get_livetv(url)
-elif mode == 15:
-    get_new_events(url)
+    #ui.addQuad(0)
+    #refresh_selection()
+    
+    load_quads()
+    
+    # now open your window. the window will be shown until you close your addon
+    ui.doModal()
+    
+    # window closed, now cleanup a bit: delete your window before the script fully exits
+    del ui
+    pass
 
-elif mode == 100:
-    resolve(url, name)
-#except:
-#    control.infoDialog("[COLOR red]Generic error. Please check the connection. Try Again Later![/COLOR]", NAME,
-#           iconimage, 5000)
+if (__name__ == '__main__'):
+    #######################################
+    # Time and Date Helpers
+    #######################################
+    try:
+        local_tzinfo = tzlocal()
+        locale_timezone = json.loads(xbmc.executeJSONRPC(
+            '{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "locale.timezone"}, "id": 1}'))
+        if locale_timezone['result']['value']:
+            local_tzinfo = gettz(locale_timezone['result']['value'])
+    except:
+        pass
 
+    params = get_params()
+    url = BASEURL
+    name = NAME
+    iconimage = ICON
+    mode = None
+    fanart = FANART
+    description = DESCRIPTION
+    query = None
+    ### 
+    ### try:
+    ###     url = unquote_plus(params["url"])
+    ### except:
+    ###     pass
+    ### try:
+    ###     name = unquote_plus(params["name"])
+    ### except:
+    ###     pass
+    ### try:
+    ###     iconimage = unquote_plus(params["iconimage"])
+    ### except:
+    ###     pass
+    ### try:
+    ###     mode = int(params["mode"])
+    ### except:
+    ###     pass
+    ### try:
+    ###     fanart = unquote_plus(params["fanart"])
+    ### except:
+    ###     pass
+    ### try:
+    ###     description = unquote_plus(params["description"])
+    ### except:
+    ###     pass
+    ### try:
+    ###     query = unquote_plus(params["query"])
+    ### except:
+    ###     pass
+    ### 
+    ### print(str(ADDON_PATH) + ': ' + str(VERSION))
+    ### print("Mode: " + str(mode))
+    ### print("URL: " + str(url))
+    ### print("Name: " + str(name))
+    ### print("IconImage: " + str(iconimage))
+    ### #########################################################
+    ### 
+    
+    #try:
+    if mode == 999: #None:
+        Main_menu()
+    elif mode == 3:
+        sports_menu()
+    elif mode == 2:
+        leagues_menu()
+    elif mode == None:
+        # Init display window object
+        #initializeGUI()
+        
+        get_events(Live_url)
+        #set_dummy_data()
+        
+        postEvents()
+        mode = 21
+    elif mode == 4:
+        get_stream(url)
+    elif mode == 10:
+        Open_settings()
+    elif mode == 14:
+        get_livetv(url)
+    elif mode == 15:
+        get_new_events(url)
+
+    elif mode == 100:
+        resolve(url, name)
+    #except:
+    #    control.infoDialog("[COLOR red]Generic error. Please check the connection. Try Again Later![/COLOR]", NAME,
+
+
+# the end!
