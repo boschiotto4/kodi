@@ -10,6 +10,10 @@ import json
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
+
+import Image
+
 import pyxbmct
 import requests
 import os, sys
@@ -20,6 +24,13 @@ from resources.modules import control, client
 from dateutil.parser import parse
 from dateutil.tz import gettz
 from dateutil.tz import tzlocal
+
+from resources.modules.soccer_data_api import soccer_api
+
+from contextlib import closing
+from xbmcvfs import File
+
+soccer_data = soccer_api.SoccerDataAPI()
 
 ADDON = xbmcaddon.Addon()
 #CWD = ADDON.getAddonInfo('path').decode('utf-8')
@@ -34,8 +45,11 @@ NAME = ADDON.getAddonInfo('name')
 VERSION = ADDON.getAddonInfo('version')
 Lang = ADDON.getLocalizedString
 
+# Addon data dir
+profile_dir = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
+
 #Dialog = xbmcgui.Dialog()
-base = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+#base = xbmcgui.Window(xbmcgui.getCurrentWindowId())
 
 vers = VERSION
 ART = ADDON_PATH + "/resources/icons/"
@@ -46,7 +60,9 @@ Alt_url = 'https://liveon.sx/program'     #'https://1.livesoccer.sx/program'
 headers = {'User-Agent': client.agent(),
            'Referer': BASEURL}
 
-accepted_league = ['italy','england','spain','germany','france','nederlands','UEFA Champions','UEFA Europa','UEFA Conference']
+accepted_league = ['italy','uefa ', 'moto', 'formula','england','spain', 'nba','germany','france','nederlands', 'mls']
+nations = ['italy','england','spain','germany','france','nederlands']
+filter = 'all'
 
 STATE = 'close'
 #addon_handle = int(sys.argv[1])
@@ -81,23 +97,44 @@ height = 220
 offset_w = 5
 offset_h = 5
 
-rows_item_count = []
-
 item_selected = [0, 0]
 data_rows = []
 
-row_items_count = []
 id_row = 0
 item_sel = 0
 
 ui = None
 
+
+class EVENT(xbmcgui.WindowXMLDialog):
+    # [optional] this function is only needed of you are passing optional data to your window
+    def __init__(self, *args, **kwargs):
+        # get the optional data and add it to a variable you can use elsewhere in your script
+        pass
+    # until now we have a blank window, the onInit function will parse your xml file
+
+    def onInit(self):
+        pass
+        
+class SPLASH(xbmcgui.WindowXML):
+    # [optional] this function is only needed of you are passing optional data to your window
+    def __init__(self, *args, **kwargs):
+        # get the optional data and add it to a variable you can use elsewhere in your script
+        pass
+    # until now we have a blank window, the onInit function will parse your xml file
+
+    def onInit(self):
+        pass
+   
+splash = SPLASH('splash.xml', ADDON_PATH, 'default', '720p', False, optional1='some data')
+   
 # add a class to create your xml based window
 class GUI(xbmcgui.WindowXML):
     # [optional] this function is only needed of you are passing optional data to your window
     def __init__(self, *args, **kwargs):
         # get the optional data and add it to a variable you can use elsewhere in your script
         self.data = kwargs['optional1']
+        self.ignore_action_later = False
         
     # until now we have a blank window, the onInit function will parse your xml file
     def onInit(self):
@@ -118,9 +155,8 @@ class GUI(xbmcgui.WindowXML):
         #xbmc.sleep(100)
         # this puts the focus on the first listitem in the first container
 
-        xbmc.log('boxss ' + str(len(self.lists)),xbmc.LOGERROR)
-        
-        #self.setFocus(gui_rows[0])
+        #xbmc.log('boxss ' + str(len(self.lists)),xbmc.LOGERROR)
+       
         pass
 
     def isInited(self):
@@ -138,10 +174,16 @@ class GUI(xbmcgui.WindowXML):
     def addQuad(self, row, _data):      
         #for i in range(0, 10):
         listitem = xbmcgui.ListItem()
-        listitem.setInfo( type="Video", infoLabels={ "Title": "" + _data.getTeams().upper() + "", "OriginalTitle": "" + _data.getFtime() + "", "Album": "" + _data.getBaseImage() + "" }   )
-        
+        listitem.setInfo( type="Video", infoLabels={ "Title": "" + _data.getTeams().upper() + "", "OriginalTitle": "" + _data.getFtime() + "", "Album": "" + _data.getEventImage() + "" }   )
+        if _data.getDate().lower() != 'today':
+            listitem.setArt({ 'poster' : 'FF000000'})
+            listitem.setArt({ 'landscape' : _data.getDate()})
+        else:
+            listitem.setArt({ 'poster' : '00000000'})
+            listitem.setArt({ 'landscape' : ''})
+
         _data.setOnlyLeagueName(_data.getLname())
-        for r in accepted_league:
+        for r in nations:
             _data.setOnlyLeagueName(_data.getOnlyLeagueName().lower().replace(r, ''))
         _data.setOnlyLeagueName(_data.getOnlyLeagueName().strip().upper())
         
@@ -153,6 +195,14 @@ class GUI(xbmcgui.WindowXML):
         pass
 
     def applyContextualImages(self):
+        global data_rows
+        
+        # Init events folder
+        if not os.path.exists(profile_dir + 'events/'):
+            os.makedirs(profile_dir + 'events/')
+        if not os.path.exists(profile_dir + 'leagues/'):
+            os.makedirs(profile_dir + 'leagues/')
+
         # Apply contextual image if present   
         for r in range(0, len(self.data)):
             for i in range(0, len(self.data[r])):
@@ -160,26 +210,49 @@ class GUI(xbmcgui.WindowXML):
                 
                 mydata = self.data[r][i]
                 
-                a = urlparse(mydata.getLogo_league())
-                #xbmc.log(str(a.path), xbmc.LOGERROR)
-                if 'football' in a.path:
-                    urls = searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLname() + ' site:goal.com')
+                # If preset, apply it...
+                if data_rows[r][i].getEventImage() != 'icons/b1.png':
+                    self.lists[r][i].setArt({ 'thumb' : profile_dir + data_rows[r][i].getEventImage()})
                 else:
-                    urls = searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLname())
-                if urls != None and len(urls) > 0:
-                    if is_url_image(urls[0]):
-                        self.lists[r][i].setArt({ 'thumb' : urls[0]})
+                    # else, look for it in the web
+                    a = urlparse(mydata.getLogo_league())
+                    #xbmc.log(str(a.path), xbmc.LOGERROR)
+                    if 'football' in a.path:
+                        urls = searchImageByDesc(mydata.getTeams() + ' ' + ' site:www.goal.com')
+                    else:
+                        urls = searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLname())
+                    if urls != None and len(urls) > 0:
+                        if is_url_image(urls[0]):
+                            # download
+                            response = requests.get(urls[0])
+                            fname = str(hash(urls[0]))
+                            with open(profile_dir + 'events/' + fname, "wb") as f:
+                                f.write(response.content)
+                            data_rows[r][i].setEventImage('events/' + fname)
+                            self.lists[r][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
+                            save_events_data()
 
                 # Apply contextual image if present
-                urls = searchImageByDesc(mydata.getOnlyLeagueName() + ' logo png',True)
-                if urls != None and len(urls) > 0:
-                    self.lists[r][i].setArt({ 'clearlogo' : urls[0]})
-                    #self.lists[r][i].setColorDiffuse('0xFFFFFFFF')
+                if data_rows[r][i].getLogoImage() != 'icons/empty.png':
+                    self.lists[r][i].setArt({ 'clearlogo' : profile_dir + data_rows[r][i].getLogoImage()})
+                else:
+                    urls = searchImageByDesc(mydata.getOnlyLeagueName() + ' logo png',True)
+                    if urls != None and len(urls) > 0:
+                        # download
+                        response = requests.get(urls[0])
+                        with open(profile_dir + 'leagues/' + mydata.getOnlyLeagueName(), "wb") as f:
+                            f.write(response.content)
+
+                        data_rows[r][i].setLogoImage('leagues/' + mydata.getOnlyLeagueName())
+                        self.lists[r][i].setArt({ 'clearlogo' : profile_dir + 'leagues/' + mydata.getOnlyLeagueName()})
         pass
         
     def onAction(self, action):
-        global id_row
 
+        if self.ignore_action_later == True:
+            self.ignore_action_later = False
+            return
+            
         if action.getId() == xbmcgui.ACTION_MOVE_LEFT:
             move_left()
         elif action.getId() == xbmcgui.ACTION_MOVE_RIGHT:
@@ -189,11 +262,35 @@ class GUI(xbmcgui.WindowXML):
         elif action.getId() == xbmcgui.ACTION_MOVE_DOWN:
             move_down()
         elif action.getId() in (ADDON_ACTION_MOUSE_LEFT_CLICK, ADDON_ACTION_MOUSE_MIDDLE_CLICK, ADDON_ACTION_MOUSE_RIGHT_CLICK, ACTION_SELECT_ITEM, ACTION_MOUSE_DOUBLE_CLICK, ADDON_ACTION_TOUCH_TAP):
-            get_stream(self.data[item_selected[1]][item_selected[0]].getStreams()) 
+            if item_selected[1] >= 0:
+                get_stream(self.data[item_selected[1]][item_selected[0]].getStreams()) 
         else:
             super(GUI, self).onAction(action)
-        pass
 
+        pass
+    
+    def onClick(self, controlId):
+        global item_selected
+        if item_selected[1] == -1:
+            self.ignore_action_later = True
+        else:
+            self.ignore_action_later = False
+        if controlId == 201:
+            refresh('all')
+        if controlId == 202:
+            refresh('serie a')
+        if controlId == 203:
+            refresh('premier')
+        if controlId == 204:
+            refresh('la liga')
+        if controlId == 205:
+            refresh('bundesliga')
+        if controlId == 206:
+            refresh('ligue 1')
+        if controlId == 207:
+            refresh('update')
+        pass
+        
     def onFocus(self, controlId):
         global id_row       
         #super(GUI, self).onFocus(controlId)
@@ -210,31 +307,61 @@ class GUI(xbmcgui.WindowXML):
 
 
 class EventData():
-    def __init__( self, id_row, _teams, _ftime, _lname, _streams, _logo_league):
-        self.teams = _teams
+    def __init__( self, id_row, _teams, _home, _away, _ftime, _lname, _streams, _logo_league, _date = 'today', _eventImage = 'icons/b1.png', _logoImage = 'icons/empty.png'):
+        # Text path
+        if 'inter milan' in _home.lower():
+            _home = _teams.replace('Inter Milan','Inter')
+        if 'inter milan' in _away.lower():
+            _away = _teams.replace('Inter Milan','Inter')
+            
+        if 'moto' in _lname.lower() or 'formula' in _lname.lower():
+            self.teams = _teams
+        else:
+            self.teams = _home + ' - ' + _away
+
+        self.home = _home
+        self.away = _away
         self.ftime = _ftime
         self.lname = _lname
         self.streams = _streams
         self.logo_league = _logo_league
         self.onlyleague = ''
+        self.datee = _date
+        self.event_image = _eventImage
+        self.logoImage = _logoImage
+    
+    # Setters
+    def setLogoImage(self, lg):
+        self.logoImage = lg
+    def setEventImage(self, lg):
+        self.event_image = lg
         
+    # Getters    
     def getTeams(self):
         return self.teams
     def getFtime(self):
         return self.ftime
-    def getBaseImage(self):
-        return 'icons/b1.png'
+    def getEventImage(self):
+        return self.event_image
+    def getLogoImage(self):
+        return self.logoImage
     def getLname(self):
         return self.lname
+    def getDate(self):
+        return self.datee
     def getStreams(self):
         return self.streams
     def getLogo_league(self):
         return self.logo_league
     def setOnlyLeagueName(self, n):
         self.onlyleague = n
-
     def getOnlyLeagueName(self):
         return self.onlyleague
+
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
+
+
 
 # Engine 
 def is_url_image(image_url):
@@ -287,12 +414,17 @@ def searchImageByDesc(desc,isLogo=False):
         urls = [r.get('media') for r in response]
         #xbmc.log(str(urls[0]), xbmc.LOGERROR)
     except:
+        log('error qwant img')
         urls = None
     return urls
     
 # GUI EVENTs
 def move_left():
     global item_sel
+
+    if item_selected[1] == -1:
+        return
+
     item_selected[0] = item_selected[0] - 1
 
     item_sel = item_sel - 1
@@ -301,6 +433,10 @@ def move_left():
 
 def move_right():
     global item_sel
+    
+    if item_selected[1] == -1:
+        return
+
     item_selected[0] = item_selected[0] + 1
     item_sel = item_sel + 1
     
@@ -315,7 +451,6 @@ def move_up():
 
 def move_down():
     item_selected[1] = item_selected[1] + 1
-    
     refresh_selection()
     pass
  
@@ -323,31 +458,46 @@ def move_down():
 def refresh_selection():
     global item_sel
     global ui
+    
+    #log (item_selected)
 
-    if len(row_items_count) <= 0:
+    # Default grid check
+    if len(ui.gui_rows) <= 0:
         return
-
-    if item_selected[1] < 0:
-        item_selected[1] = 0
+    
+    # Move Up/down check limit
+    if item_selected[1] < -1:
+        item_selected[1] = -1
     if item_selected[1] > ui.getVisibleRow() - 1:
         item_selected[1] = ui.getVisibleRow() - 1
-
+    
+    if item_selected[1] == -1:
+        return
+        
+    # Move Left/right check limit
     if item_selected[0] < 0:
         item_selected[0] = 0
-
-    #xbmc.log(str(row_items_count[item_selected[1]]), xbmc.LOGERROR)
-    #xbmc.log(str(item_selected[0]), xbmc.LOGERROR)
-    if item_selected[0] > row_items_count[item_selected[1]] - 1:
-        item_selected[0] = row_items_count[item_selected[1]] - 1
-
+    if item_selected[0] > len(ui.data[item_selected[1]]) - 1:
+        item_selected[0] = len(ui.data[item_selected[1]]) - 1
+    
+    # List selection
+    if item_sel > item_selected[0]:
+        item_sel = item_selected[0]
+        
     focused_row = (item_selected[1]) * 10 + 10
     if item_sel < 0:
         item_sel = 0
     
     if item_sel > 2:
         item_sel = 2
+
+    #for i in range(0, ui.getVisibleRow() - 1):
+    #    xbmc.executebuiltin('Control.SetFocus('+ str(i * 10 + 10) + ', ' + str(item_sel) + ')')
+    # Set focus (sync way)
+    #    if ui.gui_rows[i].isVisible():
+    #        ui.setFocus(ui.gui_rows[i], 1)
+
     xbmc.executebuiltin('Control.SetFocus('+ str(focused_row) + ', ' + str(item_sel) + ')')
-    #xbmc.log('p:' + str(len(row_items_count)),xbmc.LOGERROR)
     
     pass
  
@@ -358,29 +508,44 @@ def load_quads():
     t1 = threading.Thread(target=load_quads_backgroundWorker)
     #Background thread will finish with the main program
     t1.setDaemon(True)
-    #Start load_quads_backgroundWorker() in a separate thread
     t1.start()
-    #You main program imitated by sleep
-    #time.sleep(5)
     pass
    
 
 #Routine that processes whatever you want as background
 def load_quads_backgroundWorker(): 
-    global ui
-    global row_items_count
-
     # Wait for gui init
     xbmc.sleep(2000)
-    
+
+    #splash.close()
+    draw_page()
+    pass
+
+def draw_page():
+    global ui
+    global splash
+    global filter
+    global data_rows
     # ADD TO GUI the quads
     row = 0
     for r in data_rows:
-        for i in r: 
-            ui.addQuad(row, i)
-        row_items_count.append(len(r))
-        row = row + 1
-
+        # Draw filtered content
+        if filter == 'all':
+            for i in r:
+                ui.addQuad(row, i)
+            row = row + 1
+        elif filter in r[0].getLname().lower():
+            for i in r:
+                ui.addQuad(row, i)
+            row = row + 1
+    
+    # Find, if exist, the first focusable row and focus it
+    for i in range(0, 10):
+        if ui.gui_rows[i].isVisible():
+            ui.setFocus(ui.gui_rows[i])
+            item_selected[1] = i
+            break
+    log(filter)
     ui.applyContextualImages()
     pass
 
@@ -397,110 +562,33 @@ def convDateUtil(timestring, newfrmt='default', in_zone='UTC'):
     except:
         return timestring
 
-
-def Main_menu():
-
-    # addDir('[B][COLOR gold]Channels 24/7[/COLOR][/B]', 'https://1.livesoccer.sx/program.php', 14, ICON, FANART, '')
-    addDir('[B][COLOR white]LIVE EVENTS[/COLOR][/B]', Live_url, 5, ICON, FANART, '')
-    # addDir('[B][COLOR gold]Alternative VIEW [/COLOR][/B]', '', '', ICON, FANART, '')
-    addDir('[B][COLOR gold]Alternative LIVE EVENTS[/COLOR][/B]', Alt_url, 15, ICON, FANART, '')
-    addDir('[B][COLOR white]SPORTS[/COLOR][/B]', '', 3, ICON, FANART, '')
-    addDir('[B][COLOR white]BEST LEAGUES[/COLOR][/B]', '', 2, ICON, FANART, '')
-    addDir('[B][COLOR gold]Settings[/COLOR][/B]', '', 10, ICON, FANART, '')
-    addDir('[B][COLOR gold]Version: [COLOR lime]%s[/COLOR][/B]' % vers, '', 'BUG', ICON, FANART, '')
-    xbmcplugin.setContent(int(sys.argv[1]), 'movies')
-
-
-def leagues_menu():
-    addDir('[B][COLOR white]Uefa Champions League[/COLOR][/B]',
-           BASEURL + 'index.php?champ=uefa-champions-league', 5,
-           BASEURL + 'flags/uefa-champions-league.png', FANART, 'Uefa Champions League')
-    addDir('[B][COLOR white]Uefa Europa League[/COLOR][/B]', BASEURL + 'index.php?champ=uefa-europa-league',
-           5, BASEURL + 'flags/uefa-europa-league.png', FANART, 'Uefa Europa League')
-    addDir('[B][COLOR white]Premier League[/COLOR][/B]', BASEURL + 'index.php?champ=premier-league', 5,
-           BASEURL + 'flags/premier-league.png', FANART, 'Premier League')
-    addDir('[B][COLOR white]Bundesliga[/COLOR][/B]', BASEURL + 'index.php?champ=bundesliga', 5,
-           BASEURL + 'flags/bundesliga.png', FANART, 'Bundesliga')
-    addDir('[B][COLOR white]Laliga[/COLOR][/B]', BASEURL + 'index.php?champ=laliga', 5,
-           BASEURL + 'flags/spanish-primera-division.png', FANART, 'Laliga')
-    addDir('[B][COLOR white]Serie A[/COLOR][/B]', BASEURL + 'index.php?champ=serie-a', 5,
-           BASEURL + 'flags/serie-a.png', FANART, 'Serie a')
-    addDir('[B][COLOR white]France Ligue 1[/COLOR][/B]', BASEURL + 'index.php?champ=france-ligue-1', 5,
-           BASEURL + 'flags/france-ligue-1.png', FANART, 'France ligue 1')
-    addDir('[B][COLOR white]Eredivisie[/COLOR][/B]', BASEURL + 'index.php?champ=eredivisie', 5,
-           BASEURL + 'flags/eredivisie.png', FANART, 'Eredivisie')
-    addDir('[B][COLOR white]Australian A League[/COLOR][/B]',
-           BASEURL + 'index.php?champ=australian-a-league', 5,
-           BASEURL + 'flags/australian-a-league.png', FANART, 'Australian a league')
-    addDir('[B][COLOR white]MLS[/COLOR][/B]', BASEURL + 'index.php?champ=mls', 5,
-           BASEURL + 'flags/mls.png', FANART, 'Mls')
-    addDir('[B][COLOR white]Rugby Top 14[/COLOR][/B]', BASEURL + 'index.php?champ=rugby-top-14', 5,
-           BASEURL + 'flags/rugby-top-14.png', FANART, 'Rugby top 14')
-    addDir('[B][COLOR white]Greece Super League[/COLOR][/B]',
-           BASEURL + 'index.php?champ=greece-super-league', 5,
-           BASEURL + 'flags/greece-super-league.png', FANART, 'Greece super league')
-    addDir('[B][COLOR white]Argentina Superliga[/COLOR][/B]',
-           BASEURL + 'index.php?champ=argentina-superliga', 5,
-           BASEURL + 'flags/argentina-superliga.png', FANART, 'Argentina superliga')
-    addDir('[B][COLOR white]Portuguese Primeira Liga[/COLOR][/B]',
-           BASEURL + 'index.php?champ=portuguese-primeira-liga', 5,
-           BASEURL + 'flags/portuguese-primeira-liga.png', FANART, 'Portuguese primeira liga')
-    addDir('[B][COLOR white]Primera Division Apertura[/COLOR][/B]',
-           BASEURL + 'index.php?champ=primera-division-apertura', 5,
-           BASEURL + 'flags/primera-division-apertura.png', FANART, 'Primera division apertura')
-    addDir('[B][COLOR white]Bundesliga 2[/COLOR][/B]', BASEURL + 'index.php?champ=bundesliga-2', 5,
-           BASEURL + 'flags/bundesliga-2.png', FANART, 'Bundesliga 2')
-    addDir('[B][COLOR white]Greece Super League 2[/COLOR][/B]',
-           BASEURL + 'index.php?champ=greece-super-league-2', 5,
-           BASEURL + 'flags/greece-super-league-2.png', FANART, 'Greece super league 2')
-    addDir('[B][COLOR white]Belarus Vysheyshaya Liga[/COLOR][/B]',
-           BASEURL + 'index.php?champ=belarus-vysheyshaya-liga', 5,
-           BASEURL + 'flags/belarus-vysheyshaya-liga.png', FANART, 'Belarus vysheyshaya liga')
-
-
-def sports_menu():
-    addDir('[B][COLOR white]Football[/COLOR][/B]', BASEURL + '?type=football', 5,
-           BASEURL + 'images/football.png', FANART, 'Football')
-    addDir('[B][COLOR white]Basketball[/COLOR][/B]', BASEURL + '?type=basketball', 5,
-           BASEURL + 'images/basketball.png', FANART, 'Basketball')
-    addDir('[B][COLOR white]MotorSport[/COLOR][/B]', BASEURL + '?type=motorsport', 5,
-           BASEURL + 'images/motorsport.png', FANART, 'MotorSport')
-    addDir('[B][COLOR white]Handball[/COLOR][/B]', BASEURL + '?type=handball', 5,
-           BASEURL + 'images/handball.png', FANART, 'Handball')
-    addDir('[B][COLOR white]Rugby[/COLOR][/B]', BASEURL + '?type=rugby', 5,
-           BASEURL + 'images/rugby.png', FANART, 'Rugby')
-    addDir('[B][COLOR white]NFL[/COLOR][/B]', BASEURL + '?type=nfl', 5,
-           BASEURL + 'images/nfl.png', FANART, 'NFL')
-    addDir('[B][COLOR white]UFC[/COLOR][/B]', BASEURL + '?type=ufc', 5,
-           BASEURL + 'images/ufc.png', FANART, 'UFC')
-    addDir('[B][COLOR white]Wrestling[/COLOR][/B]', BASEURL + '?type=wresling', 5,
-           BASEURL + 'images/wresling.png', FANART, 'Wresling')
-    addDir('[B][COLOR white]Hockey[/COLOR][/B]', BASEURL + '?type=hokey', 5,
-           BASEURL + 'images/hockey.png', FANART, 'Hokey')
-    addDir('[B][COLOR white]Volleyball[/COLOR][/B]', BASEURL + '?type=volleyball', 5,
-           BASEURL + 'images/volleyball.png', FANART, 'Volleyball')
-    addDir('[B][COLOR white]Darts[/COLOR][/B]', BASEURL + '?type=darts', 5,
-           BASEURL + 'images/darts.png', FANART, 'Darts')
-    addDir('[B][COLOR white]Tennis[/COLOR][/B]', BASEURL + '?type=tennis', 5,
-           BASEURL + 'images/tennis.png', FANART, 'Tennis')
-    addDir('[B][COLOR white]Boxing[/COLOR][/B]', BASEURL + '?type=boxing', 5,
-           BASEURL + 'images/boxing.png', FANART, 'Boxing')
-    addDir('[B][COLOR white]Cricket[/COLOR][/B]', BASEURL + '?type=cricket', 5,
-           BASEURL + 'images/cricket.png', FANART, 'Cricket')
-    addDir('[B][COLOR white]Baseball[/COLOR][/B]', BASEURL + '?type=baseball', 5,
-           BASEURL + 'images/baseball.png', FANART, 'Baseball')
-    addDir('[B][COLOR white]Snooker[/COLOR][/B]', BASEURL + '?type=snooker', 5,
-           BASEURL + 'images/snooker.png', FANART, 'Snooker')
-    addDir('[B][COLOR white]Chess[/COLOR][/B]', BASEURL + '?type=chess', 5,
-           BASEURL + 'images/chess.png', FANART, 'Chess')
-
-
 def get_events(url):  # 5
     #xbmc.log('%s: {}'.format(url))
     #xbmc.log(url, xbmc.LOGERROR)
 
-    id_row = 0
     global data_rows
+    global soccer_data
+    global id_row
+
+    id_row = 0
+    # Initialize with next week games for major leagues
+    #xbmc.log(str(soccer_data.serie_a_next_turn()), xbmc.LOGERROR)
+    if len(data_rows) == 0:
+        r = []
+        for game in soccer_data.serie_a_next_turn():
+            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'italy serie a', 'not available yet', 'serie a', game['date']) )
+        data_rows.append(r)
+        id_row = id_row + 1
+        r = []
+        for game in soccer_data.premier_league_next_turn():
+            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'england premier league', 'not available yet', 'premier league', game['date']) )
+        data_rows.append(r)
+        id_row = id_row + 1
+        r = []
+        for game in soccer_data.la_liga_next_turn():
+            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'spain la liga', 'not available yet', 'la liga', game['date']) )
+        data_rows.append(r)
+        id_row = id_row + 1
 
     data = client.request(url)
     data = six.ensure_text(data, encoding='utf-8', errors='ignore')
@@ -514,6 +602,8 @@ def get_events(url):  # 5
         # xbmc.log('@#@EVENTTTTT:%s' % event)
         # xbmc.log('@#@STREAMS:%s' % streams)
         watch = '[COLORlime]*[/COLOR]' if '>Live<' in event else '[COLORred]*[/COLOR]'
+        home = ''
+        away  = ''
         try:
             teams = client.parseDOM(event, 'td')
             # xbmc.log('@#@TEAMSSSS:%s' % str(teams))
@@ -522,7 +612,7 @@ def get_events(url):  # 5
             if six.PY2:
                 home = home.strip().encode('utf-8')
                 away = away.strip().encode('utf-8')
-            teams = '[B]{0} vs {1}[/B]'.format(home, away)
+            teams = '[B]{0} - {1}[/B]'.format(home, away)
             teams = teams.replace('\t', '')
         except IndexError:
             teams = client.parseDOM(event, 'center')[0]
@@ -550,42 +640,45 @@ def get_events(url):  # 5
         logo_league = icon
         
         #addDir(name, streams, 4, icon, FANART, name)
-        row = []
-        appended = False
-        
+        appended = False      
         for r in data_rows:
-            appended = False
             if r[0].getLname() == lname:
-                r.append( EventData(id_row, teams, ftime,  lname, streams, logo_league) )
+                r.append( EventData(id_row, teams, home, away, ftime,  lname, streams, logo_league) )
                 appended = True
                 break
         if appended == False:
             new_r = []
-            new_r.append( EventData(id_row, teams, ftime,  lname, streams, logo_league) )
+            new_r.append( EventData(id_row, teams, home, away, ftime,  lname, streams, logo_league) )
             data_rows.append(new_r)
             id_row = id_row + 1
+                
         
     # SORT data_row
     #re.search(sort_priority[i_sort], r[0].getLname().lower())
     data_rows2 = []
     for a in accepted_league:
         filtered_row = []
+        accepted = False
         for r in data_rows:
             i_i = 0
+            accepted = False
             for i in r:
                 # Accept only selected events
-                accepted = False
                 if a in i.getLname().lower():
                     accepted = True
                 if accepted:
                     filtered_row.append(i)
-        data_rows2.append(filtered_row)
+            if accepted:
+                break
+        if accepted:
+            data_rows2.append(filtered_row)
     
     data_rows = data_rows2
+    #log(len(data_rows)) 
     return 
-    pass
-#xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 
+def log(strng):
+    xbmc.log(str(strng), xbmc.LOGERROR)
 
 def get_livetv(url):
     data = client.request(url)
@@ -662,8 +755,14 @@ def get_new_events(url):# 15
 def get_stream(url):  # 4
     data = six.ensure_text(base64.b64decode(unquote(url))).strip('\n')
     # xbmc.log('@#@DATAAAA: {}'.format(data))
+    
+    event = EVENT('event.xml', ADDON_PATH, 'default', '720p', optional1='some data')
+    event.doModal()
+    del event
+    return
+    
     if 'info_outline' in data:
-        control.infoDialog("[COLOR gold]No Links available ATM.\n [COLOR lime]Try Again Later![/COLOR]", NAME,
+        control.infoDialog("[COLOR green]No Links available ATM.\n [COLOR lime]Try Again Later![/COLOR]", NAME,
                            iconimage, 5000)
         return
     else:
@@ -1063,22 +1162,22 @@ def get_params():
 
 
 def set_dummy_data():
-    for r in range(0,5):
+    for r in range(0,1):
         row = []
-        for i in range(0,5):
-            row.append( EventData(r * 10 + i, "teams", "ftime",  "italy serie a", "streams", 'www.dummy.com/getpagedummy/football/football.png' ) )
+        for i in range(0,1):
+            row.append( EventData(r * 10 + i, "teams", "home", "away", "ftime",  "spain segunda", "streams", 'www.dummy.com/getpagedummy/football/football.png' ) )
         data_rows.append(row)
     pass
     
 def postEvents(): 
     global ui
-    xbmc.executebuiltin('Dialog.Close(busydialog)')
+    #xbmc.executebuiltin('Dialog.Close(busydialog)')
     
-    global base
-    base.close()
-    del base
+    #global base
+    #base.close()
+    #del base
     
-    ui = GUI('script-testwindow.xml', ADDON_PATH, 'default', '720p', False, optional1='some data')
+    ui = GUI('main.xml', ADDON_PATH, 'default', '720p', False, optional1='some data')
 
     #ui.addQuad(0)
     #refresh_selection()
@@ -1088,10 +1187,51 @@ def postEvents():
     # now open your window. the window will be shown until you close your addon
     ui.doModal()
     
+    splash.close()
+    
     # window closed, now cleanup a bit: delete your window before the script fully exits
     del ui
     pass
 
+def refresh(_type):
+    global ui
+    global data_rows
+    global filter
+    
+    # Clear the page
+    id = 0
+    for r in data_rows:
+        ui.gui_rows[id].reset()
+        ui.gui_rows[id].setVisible(False)
+        id = id + 1
+    item_selected = [0, -1]
+    
+    # Apply the filter
+    if _type == 'update':
+        data_rows.clear()
+        data_rows = []
+        get_events(Live_url)
+        filter = 'all'
+    else:
+        filter = _type
+    
+    load_quads()
+    pass
+
+def save_events_data():
+
+    json_string = []
+    for r in data_rows:
+        j_s = []          
+        for i in r:
+            j_s.append(json.dumps(i.toJson()))
+        json_string.append(json.dumps(j_s))
+            
+    with closing(xbmcvfs.File(profile_dir + '/data.dat','wb')) as fn:
+        fn.write(bytearray(json.dumps(json_string).encode('utf-8')))
+    pass
+
+    
 if (__name__ == '__main__'):
     #######################################
     # Time and Date Helpers
@@ -1113,69 +1253,58 @@ if (__name__ == '__main__'):
     fanart = FANART
     description = DESCRIPTION
     query = None
-    ### 
-    ### try:
-    ###     url = unquote_plus(params["url"])
-    ### except:
-    ###     pass
-    ### try:
-    ###     name = unquote_plus(params["name"])
-    ### except:
-    ###     pass
-    ### try:
-    ###     iconimage = unquote_plus(params["iconimage"])
-    ### except:
-    ###     pass
-    ### try:
-    ###     mode = int(params["mode"])
-    ### except:
-    ###     pass
-    ### try:
-    ###     fanart = unquote_plus(params["fanart"])
-    ### except:
-    ###     pass
-    ### try:
-    ###     description = unquote_plus(params["description"])
-    ### except:
-    ###     pass
-    ### try:
-    ###     query = unquote_plus(params["query"])
-    ### except:
-    ###     pass
-    ### 
-    ### print(str(ADDON_PATH) + ': ' + str(VERSION))
-    ### print("Mode: " + str(mode))
-    ### print("URL: " + str(url))
-    ### print("Name: " + str(name))
-    ### print("IconImage: " + str(iconimage))
-    ### #########################################################
-    ### 
     
     #try:
     if mode == 999: #None:
         Main_menu()
-    elif mode == 3:
-        sports_menu()
-    elif mode == 2:
-        leagues_menu()
     elif mode == None:
-        # Init display window object
-        #initializeGUI()
+        # Splash
+        splash.show()
+     
+        # Addon data dir
+        profile_dir = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
+     
+        # Check if data exist
+        text = ''
+        with closing(xbmcvfs.File(profile_dir + '/data.dat','r')) as fo:
+            text = fo.read()
         
-        get_events(Live_url)
-        #set_dummy_data()
-        
+        if text != '':
+            # Load json data
+            d_r = []
+            d_r = json.loads(text)
+            # Is data up to date?
+            # Y
+            
+            # Draw data
+            ri = 0
+            for r in d_r:
+                ss = json.loads(r)
+                sr = []
+                for i in ss:
+                    ed = json.loads(i)
+                    #log(ed)
+                    d =  json.loads(ed)
+                    #"teams": "Hellas Verona - Napoli", "ftime": "15:00", "lname": "italy serie a", "streams": "not available yet", "logo_league": "serie a", "onlyleague": "", "datee": "2023-10-21"}
+                    # id_row, _teams, _home, _away, _ftime, _lname, _streams, _logo_league, _date
+                    sr.append(EventData(ri, d['teams'], d['home'], d['away'], d['ftime'], d['lname'], d['streams'], d['logo_league'], d['datee'],d['event_image'],d['logoImage']))
+                ri = ri + 1
+                data_rows.append(sr)
+            
+        else:
+            # Empty data: get events
+            get_events(Live_url)
+            #set_dummy_data()
+            
+            # Save events
+            save_events_data()
+
         postEvents()
         mode = 21
-    elif mode == 4:
-        get_stream(url)
+#    elif mode == 4:
+#        get_stream(url)
     elif mode == 10:
         Open_settings()
-    elif mode == 14:
-        get_livetv(url)
-    elif mode == 15:
-        get_new_events(url)
-
     elif mode == 100:
         resolve(url, name)
     #except:

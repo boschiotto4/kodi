@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window>
+  <animation effect="fade" time="1000">WindowOpen</animation>
+  <animation effect="slide" end="0,576" time="100">WindowClose</animation>
+  <zorder>99</zorder>
+	<controls>
+		<control type="image">
+			<left>0</left>
+			<top>0</top>
+			<width>1280</width>
+			<height>720</height>
+			<texture>icons/bg.png</texture>
+			<visible>true</visible>
+		</control>
+		<control type="image" id="12">
+			<left>80</left>
+			<top>550</top>
+			<width>220</width>
+			<height>90</height>
+			<texture>icons/logo.png</texture>
+			<!-- <animation effect="fade" start="100" end="0" time="200" tween="sine">Conditional</animation> -->
+			<visible>true</visible>
+		</control>
+
+	</controls>
+</window>

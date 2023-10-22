@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<window id="1111" type="dialog">
+  <!-- <animation effect="fade" time="1000">WindowOpen</animation> -->
+  <!-- <animation effect="slide" end="0,576" time="100">WindowClose</animation> -->
+	<controls>
+		<control type="image">
+			<left>0</left>
+			<top>0</top>
+			<width>1280</width>
+			<height>720</height>
+			<texture>icons/bg.png</texture>
+			<colordiffuse>88000000</colordiffuse>
+			<visible>true</visible>
+		</control>
+
+			<control type="image">
+				<left>200</left>
+				<top>200</top>
+				<width>760</width>
+				<height>440</height>
+				<texture>icons/b1.png</texture>
+			</control>
+			<control type="image">
+				<left>0</left>
+				<top>0</top>
+				<width>760</width>
+				<height>440</height>
+				<texture>$INFO[ListItem.Art(thumb)]</texture>
+			</control>
+			<control type="image">
+				<left>0</left>
+				<top>260</top>
+				<width>760</width>
+				<height>180</height>
+				<colordiffuse>AA000000</colordiffuse>
+				<texture>icons/bw.png</texture>
+			</control>	
+			<control type="image">
+				<left>0</left>
+				<top>380</top>
+				<width>760</width>
+				<height>60</height>
+				<colordiffuse>FFFFFFFF</colordiffuse>
+				<texture>icons/bw.png</texture>
+			</control>
+			<control type="image">
+				<left>632</left>
+				<top>312</top>
+				<width>128</width>
+				<height>128</height>
+				<texture>icons/bw.png</texture>
+			</control>
+			<control type="image">
+				<left>644</left>
+				<top>324</top>
+				<width>104</width>
+				<height>104</height>
+				<texture>$INFO[ListItem.Art(clearlogo)]</texture>
+			</control>
+			<control type="label">
+				<left>40</left>
+				<top>260</top>
+				<height>60</height>
+				<width>600</width>
+				<font>font10</font>
+				<label>$INFO[ListItem.Title]</label>
+			</control>
+			<control type="label">
+				<left>40</left>
+				<top>320</top>
+				<height>60</height>
+				<width>600</width>
+				<font>font10</font>
+				<label>$INFO[ListItem.OriginalTitle]</label>
+			</control>
+			<control type="label">
+				<left>40</left>
+				<top>380</top>
+				<height>60</height>
+				<width>600</width>
+				<font>font10</font>
+				<textcolor>FF000000</textcolor>
+				<label>$INFO[ListItem.Label]</label>
+			</control>
+
+	</controls>
+</window>

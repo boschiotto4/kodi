@@ -1,32 +1,200 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
+  <animation effect="fade" time="1000">WindowOpen</animation>
+  <animation effect="slide" end="0,576" time="100">WindowClose</animation>
+    <zorder>2</zorder>
 	<controls>
+		<control type="image">
+			<left>0</left>
+			<top>0</top>
+			<width>1280</width>
+			<height>720</height>
+			<texture>icons/bg.png</texture>
+			<visible>true</visible>
+		</control>
 		<control type="image" id="12">
 			<left>50</left>
 			<top>20</top>
-			<width>180</width>
-			<height>60</height>
+			<width>114</width>
+			<height>48</height>
 			<texture>icons/logo.png</texture>
+			<!-- <animation effect="fade" start="100" end="0" time="2" tween="sine">Conditional</animation> -->
 			<visible>true</visible>
+		</control>
+
+		<control type="button" id="201">
+			  <description>settings</description>
+			  <left>50</left>
+			  <top>80</top>
+			  <width>170</width>
+			  <height>50</height>
+			  <texturefocus colordiffuse="FF77FF88">icons/bw.png</texturefocus>
+			  <texturenofocus colordiffuse="FFFFAAFF">icons/b1.png</texturenofocus>
+			  <label>DIRETTA</label>
+			  <font>font10</font>
+			  <textcolor>FFFFFFFF</textcolor>
+			  <focusedcolor>FF000000</focusedcolor>
+			  <disabledcolor>80FFFFFF</disabledcolor>
+			  <invalidcolor>FFFFFFFF</invalidcolor>
+			  <align>center</align>
+			  <aligny>center</aligny>
+			  <pulseonselect>true</pulseonselect>
+			  <onup>201</onup>
+			  <ondown>99</ondown>
+			  <onleft>201</onleft>
+			  <onright>202</onright>
+		</control>
+		<control type="button" id="202">
+			  <description>a</description>
+			  <left>225</left>
+			  <top>80</top>
+			  <width>170</width>
+			  <height>50</height>
+			  <texturefocus colordiffuse="FF77FF88">icons/bw.png</texturefocus>
+			  <texturenofocus colordiffuse="FFFFAAFF">icons/b1.png</texturenofocus>
+			  <label>SERIE A</label>
+			  <font>font10</font>
+			  <textcolor>FFFFFFFF</textcolor>
+			  <focusedcolor>FF000000</focusedcolor>
+			  <disabledcolor>80FFFFFF</disabledcolor>
+			  <invalidcolor>FFFFFFFF</invalidcolor>
+			  <align>center</align>
+			  <aligny>center</aligny>
+			  <pulseonselect>true</pulseonselect>
+			  <onup>202</onup>
+			  <ondown>99</ondown>
+			  <onleft>201</onleft>
+			  <onright>203</onright>
+		</control>
+		<control type="button" id="203">
+			  <description>prem</description>
+			  <left>400</left>
+			  <top>80</top>
+			  <width>170</width>
+			  <height>50</height>
+			  <texturefocus colordiffuse="FF77FF88">icons/bw.png</texturefocus>
+			  <texturenofocus colordiffuse="FFFFAAFF">icons/b1.png</texturenofocus>
+			  <label>PREMIER LEAGUE</label>
+			  <font>font10</font>
+			  <textcolor>FFFFFFFF</textcolor>
+			  <focusedcolor>FF000000</focusedcolor>
+			  <disabledcolor>80FFFFFF</disabledcolor>
+			  <invalidcolor>FFFFFFFF</invalidcolor>
+			  <align>center</align>
+			  <aligny>center</aligny>
+			  <pulseonselect>true</pulseonselect>
+			  <onup>203</onup>
+			  <ondown>99</ondown>
+			  <onleft>202</onleft>
+			  <onright>204</onright>
+		</control>
+		<control type="button" id="204">
+			  <description>liga</description>
+			  <left>575</left>
+			  <top>80</top>
+			  <width>170</width>
+			  <height>50</height>
+			  <texturefocus colordiffuse="FF77FF88">icons/bw.png</texturefocus>
+			  <texturenofocus colordiffuse="FFFFAAFF">icons/b1.png</texturenofocus>
+			  <label>LA LIGA</label>
+			  <font>font10</font>
+			  <textcolor>FFFFFFFF</textcolor>
+			  <focusedcolor>FF000000</focusedcolor>
+			  <disabledcolor>80FFFFFF</disabledcolor>
+			  <invalidcolor>FFFFFFFF</invalidcolor>
+			  <align>center</align>
+			  <aligny>center</aligny>
+			  <pulseonselect>true</pulseonselect>
+			  <onup>204</onup>
+			  <ondown>99</ondown>
+			  <onleft>203</onleft>
+			  <onright>205</onright>
+		</control>
+		<control type="button" id="205">
+			  <description>My first button control</description>
+			  <left>750</left>
+			  <top>80</top>
+			  <width>170</width>
+			  <height>50</height>
+			  <texturefocus colordiffuse="FF77FF88">icons/bw.png</texturefocus>
+			  <texturenofocus colordiffuse="FFFFAAFF">icons/b1.png</texturenofocus>
+			  <label>BUNDESLIGA</label>
+			  <font>font10</font>
+			  <textcolor>FFFFFFFF</textcolor>
+			  <focusedcolor>FF000000</focusedcolor>
+			  <disabledcolor>80FFFFFF</disabledcolor>
+			  <invalidcolor>FFFFFFFF</invalidcolor>
+			  <align>center</align>
+			  <aligny>center</aligny>
+			  <pulseonselect>true</pulseonselect>
+			  <onup>205</onup>
+			  <ondown>99</ondown>
+			  <onleft>204</onleft>
+			  <onright>206</onright>
+		</control>
+		<control type="button" id="206">
+			  <description>My first button control</description>
+			  <left>925</left>
+			  <top>80</top>
+			  <width>170</width>
+			  <height>50</height>
+			  <texturefocus colordiffuse="FF77FF88">icons/bw.png</texturefocus>
+			  <texturenofocus colordiffuse="FFFFAAFF">icons/b1.png</texturenofocus>
+			  <label>LIGUE 1</label>
+			  <font>font10</font>
+			  <textcolor>FFFFFFFF</textcolor>
+			  <focusedcolor>FF000000</focusedcolor>
+			  <disabledcolor>80FFFFFF</disabledcolor>
+			  <invalidcolor>FFFFFFFF</invalidcolor>
+			  <align>center</align>
+			  <aligny>center</aligny>
+			  <pulseonselect>true</pulseonselect>
+			  <onup>206</onup>
+			  <ondown>99</ondown>
+			  <onleft>205</onleft>
+			  <onright>207</onright>
+		</control>
+		<control type="button" id="207">
+			  <description>My first button control</description>
+			  <left>1100</left>
+			  <top>80</top>
+			  <width>170</width>
+			  <height>50</height>
+			  <texturefocus colordiffuse="FF77FF88">icons/bw.png</texturefocus>
+			  <texturenofocus colordiffuse="FFFFAAFF">icons/b1.png</texturenofocus>
+			  <label>AGGIORNA</label>
+			  <font>font10</font>
+			  <textcolor>FFFFFFFF</textcolor>
+			  <focusedcolor>FF000000</focusedcolor>
+			  <disabledcolor>80FFFFFF</disabledcolor>
+			  <invalidcolor>FFFFFFFF</invalidcolor>
+			  <align>center</align>
+			  <aligny>center</aligny>
+			  <pulseonselect>true</pulseonselect>
+			  <onclick>refresh</onclick>
+			  <onup>207</onup>
+			  <ondown>99</ondown>
+			  <onleft>206</onleft>
+			  <onright>207</onright>
 		</control>
 
 		<control type="grouplist" id="17">
 		  <description>My first group list control</description>
 		  <left>50</left>
-		  <top>100</top>
+		  <top>135</top>
 		  <width>1230</width>
-		  <height>600</height>
+		  <height>580</height>
 		  <itemgap>10</itemgap>
 		  <pagecontrol>25</pagecontrol>
 		  <scrolltime tween="sine" easing="out">200</scrolltime>
 		  <orientation>vertical</orientation>
 		  <usecontrolcoords>false</usecontrolcoords>
 		  <visible>true</visible>
-		  <onup>2</onup>
-		  <ondown>3</ondown>
-		  <onleft>1</onleft>
-		  <onright>1</onright>
-		  <align>right</align>
+		  <onup>201</onup>
+		  <ondown>99</ondown>
+		  <onleft>99</onleft>
+		  <onright>99</onright>
+		  <align>top</align>
 		<!-- 1 Row -->  
 		<control type="list" id="10">
 			<left>50</left>
@@ -59,10 +227,26 @@
 				</control>	
 				<control type="image">
 					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>0</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
+				<control type="image">
+					<left>0</left>
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -73,10 +257,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -133,8 +317,25 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+					<visible></visible>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>0</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<label>$INFO[ListItem.Art(landscape)]</label>
 				</control>
 				<control type="image">
 					<left>316</left>
@@ -144,10 +345,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -220,7 +421,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -231,10 +432,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -291,7 +492,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -302,10 +503,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -378,7 +579,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -389,10 +590,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -449,7 +650,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -460,10 +661,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -536,7 +737,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -547,10 +748,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -607,7 +808,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -618,10 +819,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -694,7 +895,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -705,10 +906,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -765,7 +966,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -776,10 +977,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -852,7 +1053,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -863,10 +1064,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -923,7 +1124,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -934,10 +1135,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -1010,7 +1211,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -1021,10 +1222,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -1081,7 +1282,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -1092,10 +1293,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -1168,7 +1369,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -1179,10 +1380,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -1239,7 +1440,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -1250,10 +1451,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -1326,7 +1527,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -1337,10 +1538,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -1397,7 +1598,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -1408,10 +1609,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -1484,7 +1685,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -1495,10 +1696,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
@@ -1555,7 +1756,7 @@
 					<top>190</top>
 					<width>380</width>
 					<height>30</height>
-					<colordiffuse>DEFFFFFF</colordiffuse>
+					<colordiffuse>FFFFFFFF</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
@@ -1566,10 +1767,10 @@
 					<texture>icons/bw.png</texture>
 				</control>
 				<control type="image">
-					<left>316</left>
-					<top>156</top>
-					<width>64</width>
-					<height>64</height>
+					<left>322</left>
+					<top>162</top>
+					<width>52</width>
+					<height>52</height>
 					<texture>$INFO[ListItem.Art(clearlogo)]</texture>
 				</control>
 				<control type="label">
