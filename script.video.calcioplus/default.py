@@ -6,18 +6,22 @@ import six
 from six.moves.urllib.parse import urljoin, unquote_plus, quote_plus, quote, unquote
 from six.moves import zip
 
+import threading
+import time
+
 import json
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
-import Image
+from PIL import Image
 
 import pyxbmct
 import requests
 import os, sys
 import xbmcplugin
+from datetime import datetime as dt, timedelta
 
 from urllib.parse import urlparse
 from resources.modules import control, client
@@ -105,17 +109,73 @@ item_sel = 0
 
 ui = None
 
-
 class EVENT(xbmcgui.WindowXMLDialog):
     # [optional] this function is only needed of you are passing optional data to your window
     def __init__(self, *args, **kwargs):
+        global data_rows
+
         # get the optional data and add it to a variable you can use elsewhere in your script
+        self.item = data_rows[item_selected[1]][item_selected[0]]
+        self.lst = kwargs.get('optional1', None)
+        self.sel = 0
         pass
     # until now we have a blank window, the onInit function will parse your xml file
 
     def onInit(self):
+        bg = self.getControl(212)
+        bg.setImage(profile_dir + self.item.getEventImage())
+
+        bgl = self.getControl(216)
+        bgl.setImage(profile_dir + self.item.getLogoImage())
+
+        tit = self.getControl(213)
+        hour = self.getControl(214)
+        league = self.getControl(215)
+        tit.setLabel(self.item.getTeams().upper())
+        hour.setLabel(self.item.getFtime())
+        league.setLabel(self.item.getOnlyLeagueName())
+
+        self.lnk = self.getControl(222)
+
+        self.appendList(self.lst)
+
+        xbmc.executebuiltin('Control.SetFocus(10)')
         pass
+
+    def onAction(self, action):
+        if action.getId() == xbmcgui.ACTION_PREVIOUS_MENU or action.getId() == ACTION_BACK_MENU:
+            self.close()
+        elif action.getId() == xbmcgui.ACTION_MOVE_LEFT:
+            self.sel = self.sel - 1
+            if self.sel < 0:
+                self.sel = 0
+        elif action.getId() == xbmcgui.ACTION_MOVE_RIGHT:
+            self.sel = self.sel + 1
+            if self.sel > len(self.lst) - 1:
+                self.sel = len(self.lst) - 1
+        elif action.getId() in (ADDON_ACTION_MOUSE_LEFT_CLICK, ADDON_ACTION_MOUSE_MIDDLE_CLICK, ADDON_ACTION_MOUSE_RIGHT_CLICK, ACTION_SELECT_ITEM, ACTION_MOUSE_DOUBLE_CLICK, ADDON_ACTION_TOUCH_TAP):
+            self.lnk.setLabel(self.lst[self.sel])
+
+            # Extract url
+            u = self.lst[self.sel].split('|')
+            resolve(u[1].strip(), self.item.getTeams().upper())#u[0].strip())
+            self.close()
+        else:
+            super(GUI, self).onAction(action)
+
+    def appendList(self, lst):
+        # Set links
+        # Link list
+        ls = self.getControl(10)
+        for s in lst:
+            lItem = xbmcgui.ListItem()
+            text = s[s.find("(")+1:s.find(")")]
+            lItem.setInfo( type="Video", infoLabels={ "Title": ""+ text +"", "OriginalTitle": "" + text + "" } )
+            ls.addItem(lItem)
         
+        xbmc.executebuiltin('Control.SetFocus(10)')
+        pass
+
 class SPLASH(xbmcgui.WindowXML):
     # [optional] this function is only needed of you are passing optional data to your window
     def __init__(self, *args, **kwargs):
@@ -164,6 +224,7 @@ class GUI(xbmcgui.WindowXML):
             return False
         return True
         pass
+
     def getVisibleRow(self):
         c = 0
         for r in range(0, 10):
@@ -225,7 +286,7 @@ class GUI(xbmcgui.WindowXML):
                         if is_url_image(urls[0]):
                             # download
                             response = requests.get(urls[0])
-                            fname = str(hash(urls[0]))
+                            fname = str(abs(hash(urls[0])))
                             with open(profile_dir + 'events/' + fname, "wb") as f:
                                 f.write(response.content)
                             data_rows[r][i].setEventImage('events/' + fname)
@@ -233,18 +294,26 @@ class GUI(xbmcgui.WindowXML):
                             save_events_data()
 
                 # Apply contextual image if present
-                if data_rows[r][i].getLogoImage() != 'icons/empty.png':
-                    self.lists[r][i].setArt({ 'clearlogo' : profile_dir + data_rows[r][i].getLogoImage()})
+                flname = 'leagues/' + mydata.getOnlyLeagueName() + '.png'
+                if os.path.exists(profile_dir + flname): #data_rows[r][i].getLogoImage() != 'icons/empty.png':
+                    self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
+                    data_rows[r][i].setLogoImage(flname)
                 else:
                     urls = searchImageByDesc(mydata.getOnlyLeagueName() + ' logo png',True)
                     if urls != None and len(urls) > 0:
                         # download
                         response = requests.get(urls[0])
-                        with open(profile_dir + 'leagues/' + mydata.getOnlyLeagueName(), "wb") as f:
+                        with open(profile_dir + flname, "wb") as f:
                             f.write(response.content)
+                        
+                        im = Image.open(profile_dir + flname) 
+                        newsize = (128, 128)
+                        im = im.resize(newsize)#, Resampling.BICUBIC)
+                        im.save(profile_dir + flname) 
+ 
 
-                        data_rows[r][i].setLogoImage('leagues/' + mydata.getOnlyLeagueName())
-                        self.lists[r][i].setArt({ 'clearlogo' : profile_dir + 'leagues/' + mydata.getOnlyLeagueName()})
+                        data_rows[r][i].setLogoImage(flname)
+                        self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
         pass
         
     def onAction(self, action):
@@ -305,9 +374,8 @@ class GUI(xbmcgui.WindowXML):
             self.lists[id_row][i].setLabel2('icons/b2.png')
         pass
 
-
 class EventData():
-    def __init__( self, id_row, _teams, _home, _away, _ftime, _lname, _streams, _logo_league, _date = 'today', _eventImage = 'icons/b1.png', _logoImage = 'icons/empty.png'):
+    def __init__( self, _id_row, _teams, _home, _away, _ftime, _lname, _streams, _logo_league, _date = 'today', _eventImage = 'icons/b1.png', _logoImage = 'icons/empty.png'):
         # Text path
         if 'inter milan' in _home.lower():
             _home = _teams.replace('Inter Milan','Inter')
@@ -319,6 +387,7 @@ class EventData():
         else:
             self.teams = _home + ' - ' + _away
 
+        self.id_row = _id_row 
         self.home = _home
         self.away = _away
         self.ftime = _ftime
@@ -326,17 +395,33 @@ class EventData():
         self.streams = _streams
         self.logo_league = _logo_league
         self.onlyleague = ''
+
+        if _date == 'today':
+            today = dt.now()
+            _date = today.strftime("%Y-%m-%d")
         self.datee = _date
         self.event_image = _eventImage
         self.logoImage = _logoImage
     
     # Setters
+    def setIdRow(self, ri):
+        self.id_row = ri 
     def setLogoImage(self, lg):
         self.logoImage = lg
     def setEventImage(self, lg):
         self.event_image = lg
+    def setStreams(self, s):
+        self.streams = s
+    def setOnlyLeagueName(self, n):
+        self.onlyleague = n
         
     # Getters    
+    def getIdRow(self):
+        return self.id_row
+    def getHome(self):
+        return self.home
+    def getAway(self):
+        return self.away
     def getTeams(self):
         return self.teams
     def getFtime(self):
@@ -353,15 +438,11 @@ class EventData():
         return self.streams
     def getLogo_league(self):
         return self.logo_league
-    def setOnlyLeagueName(self, n):
-        self.onlyleague = n
     def getOnlyLeagueName(self):
         return self.onlyleague
 
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__)
-
-
 
 # Engine 
 def is_url_image(image_url):
@@ -373,7 +454,7 @@ def is_url_image(image_url):
     except:
         return False
     return False
-   
+
 def searchImageByDesc(desc,isLogo=False):
     urls = []
     try:
@@ -417,7 +498,7 @@ def searchImageByDesc(desc,isLogo=False):
         log('error qwant img')
         urls = None
     return urls
-    
+
 # GUI EVENTs
 def move_left():
     global item_sel
@@ -454,7 +535,6 @@ def move_down():
     refresh_selection()
     pass
  
-
 def refresh_selection():
     global item_sel
     global ui
@@ -500,9 +580,6 @@ def refresh_selection():
     xbmc.executebuiltin('Control.SetFocus('+ str(focused_row) + ', ' + str(item_sel) + ')')
     
     pass
- 
-import threading
-import time
 
 def load_quads():
     t1 = threading.Thread(target=load_quads_backgroundWorker)
@@ -565,30 +642,12 @@ def convDateUtil(timestring, newfrmt='default', in_zone='UTC'):
 def get_events(url):  # 5
     #xbmc.log('%s: {}'.format(url))
     #xbmc.log(url, xbmc.LOGERROR)
-
-    global data_rows
     global soccer_data
     global id_row
 
+    data_r = []
+
     id_row = 0
-    # Initialize with next week games for major leagues
-    #xbmc.log(str(soccer_data.serie_a_next_turn()), xbmc.LOGERROR)
-    if len(data_rows) == 0:
-        r = []
-        for game in soccer_data.serie_a_next_turn():
-            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'italy serie a', 'not available yet', 'serie a', game['date']) )
-        data_rows.append(r)
-        id_row = id_row + 1
-        r = []
-        for game in soccer_data.premier_league_next_turn():
-            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'england premier league', 'not available yet', 'premier league', game['date']) )
-        data_rows.append(r)
-        id_row = id_row + 1
-        r = []
-        for game in soccer_data.la_liga_next_turn():
-            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'spain la liga', 'not available yet', 'la liga', game['date']) )
-        data_rows.append(r)
-        id_row = id_row + 1
 
     data = client.request(url)
     data = six.ensure_text(data, encoding='utf-8', errors='ignore')
@@ -628,7 +687,7 @@ def get_events(url):  # 5
         time = client.parseDOM(event, 'span', attrs={'class': 'gmt_m_time'})[0]
         time = time.split('GMT')[0].strip()
         cov_time = convDateUtil(time, 'default', 'GMT+3')#.format(str(control.setting('timezone'))))
-        ftime = '[B][COLORwhite]{}[/COLOR][/B]'.format(cov_time)
+        ftime = '{}'.format(cov_time)
         name = '{0}{1} [COLORgold]{2}[/COLOR] - [I]{3}[/I]'.format(watch, ftime, teams, lname)
 
         # links = re.findall(r'<a href="(.+?)".+?>( Link.+? )</a>', event, re.DOTALL)
@@ -641,41 +700,19 @@ def get_events(url):  # 5
         
         #addDir(name, streams, 4, icon, FANART, name)
         appended = False      
-        for r in data_rows:
+        for r in data_r:
             if r[0].getLname() == lname:
-                r.append( EventData(id_row, teams, home, away, ftime,  lname, streams, logo_league) )
+                r.append( EventData(r[0].getIdRow(), teams, home, away, ftime,  lname, streams, logo_league) )
                 appended = True
                 break
         if appended == False:
             new_r = []
             new_r.append( EventData(id_row, teams, home, away, ftime,  lname, streams, logo_league) )
-            data_rows.append(new_r)
+            data_r.append(new_r)
             id_row = id_row + 1
                 
-        
-    # SORT data_row
-    #re.search(sort_priority[i_sort], r[0].getLname().lower())
-    data_rows2 = []
-    for a in accepted_league:
-        filtered_row = []
-        accepted = False
-        for r in data_rows:
-            i_i = 0
-            accepted = False
-            for i in r:
-                # Accept only selected events
-                if a in i.getLname().lower():
-                    accepted = True
-                if accepted:
-                    filtered_row.append(i)
-            if accepted:
-                break
-        if accepted:
-            data_rows2.append(filtered_row)
-    
-    data_rows = data_rows2
-    #log(len(data_rows)) 
-    return 
+    #log(len(data_r)) 
+    return data_r
 
 def log(strng):
     xbmc.log(str(strng), xbmc.LOGERROR)
@@ -753,14 +790,14 @@ def get_new_events(url):# 15
 #xbmcplugin.setContent(int(sys.argv[1]), 'videos')
 
 def get_stream(url):  # 4
+    
+    if url == '':
+        control.infoDialog("[COLOR green]No Links available ATM.\n [COLOR lime]Try Again Later![/COLOR]", NAME,
+                   iconimage, 5000)
+        return
+
     data = six.ensure_text(base64.b64decode(unquote(url))).strip('\n')
     # xbmc.log('@#@DATAAAA: {}'.format(data))
-    
-    event = EVENT('event.xml', ADDON_PATH, 'default', '720p', optional1='some data')
-    event.doModal()
-    del event
-    return
-    
     if 'info_outline' in data:
         control.infoDialog("[COLOR green]No Links available ATM.\n [COLOR lime]Try Again Later![/COLOR]", NAME,
                            iconimage, 5000)
@@ -780,36 +817,30 @@ def get_stream(url):  # 4
                     title += ' | {}'.format(link)
                 streams.append(link.rstrip())
                 titles.append(title)
-
-        if len(streams) > 1:
-            dialog = xbmcgui.Dialog()
-            ret = dialog.select('[COLORgold][B]Choose Stream[/B][/COLOR]', titles)
-            if ret == -1:
-                return
-            elif ret > -1:
-                host = streams[ret]
-                # xbmc.log('@#@STREAMMMMM:%s' % host)
-                return resolve(host, name)
-            else:
-                return False
-        else:
-            link = links[0][0]
-            return resolve(link, name)
-
-
-#def idle():
-#    if float(xbmcaddon.Addon('xbmc.addon').getAddonInfo('version')[:4]) > 17.6:
-#        xbmc.executebuiltin('Dialog.Close(busydialognocancel)')
-#    else:
-#        xbmc.executebuiltin('Dialog.Close(busydialog)')
-
-
-#def busy():
-#    if float(xbmcaddon.Addon('xbmc.addon').getAddonInfo('version')[:4]) > 17.6:
-#        xbmc.executebuiltin('ActivateWindow(busydialognocancel)')
-#    else:
-#        xbmc.executebuiltin('ActivateWindow(busydialog)')
-
+                
+        # Append link to event gui
+        event = EVENT('event.xml', ADDON_PATH, 'default', '720p', optional1=titles)
+        #event.appendList(titles)
+        
+        event.doModal()
+        del event
+        return
+        
+#        if len(streams) > 1:
+#            dialog = xbmcgui.Dialog()
+#            ret = dialog.select('[COLORgold][B]Choose Stream[/B][/COLOR]', titles)
+#            if ret == -1:
+#                return
+#            elif ret > -1:
+#                host = streams[ret]
+#                # xbmc.log('@#@STREAMMMMM:%s' % host)
+#                return resolve(host, name)
+#            else:
+#                return False
+#        else:
+#            link = links[0][0]
+#            return resolve(link, name)
+    pass
 
 def resolve(url, name):
     ragnaru = ['liveon.sx/embed', '//em.bedsport', 'cdnz.one/ch', 'cdn1.link/ch', 'cdn2.link/ch']
@@ -1120,10 +1151,8 @@ def resolve(url, name):
     quit()
     xbmcplugin.setResolvedUrl(int(sys.argv[1]), False, liz)
 
-
 def Open_settings():
     control.openSettings()
-
 
 def addDir(name, url, mode, iconimage, fanart, description):
     u = sys.argv[0] + "?url=" + quote_plus(url) + "&mode=" + str(mode) + "&name=" + quote_plus(
@@ -1144,7 +1173,6 @@ def addDir(name, url, mode, iconimage, fanart, description):
         ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
 
-
 def get_params():
     param = []
     paramstring = [] #sys.argv[2]
@@ -1159,7 +1187,6 @@ def get_params():
             splitparams = pairsofparams[i].split('=')
             if (len(splitparams)) == 2: param[splitparams[0]] = splitparams[1]
     return param
-
 
 def set_dummy_data():
     for r in range(0,1):
@@ -1219,6 +1246,7 @@ def refresh(_type):
     pass
 
 def save_events_data():
+    global data_rows
 
     json_string = []
     for r in data_rows:
@@ -1231,7 +1259,92 @@ def save_events_data():
         fn.write(bytearray(json.dumps(json_string).encode('utf-8')))
     pass
 
+def purge_data_rows():
+    global data_rows
+
+    # Draw data
+    ri = 0
+    now = dt.now() - timedelta(hours=3)
+    #log(now)
+    d_r = []
+
+    for r in data_rows:
+        sr = []
+        for i in r:
+            datetime_str = i.getDate() + ' ' + i.getFtime() #['datee'] + ' ' + d['ftime']
+            log(datetime_str)
+            #datetime_object = dt.strptime(str(datetime_str), "%Y-%m-%d %H:%M")
+            try:
+                datetime_object = dt.strptime(datetime_str, "%Y-%m-%d %H:%M")
+            except TypeError:
+                datetime_object = dt(*(time.strptime(datetime_str, "%Y-%m-%d %H:%M")[0:6]))
+
+            if datetime_object > now:
+                #"teams": "Hellas Verona - Napoli", "ftime": "15:00", "lname": "italy serie a", "streams": "not available yet", "logo_league": "serie a", "onlyleague": "", "datee": "2023-10-21"}
+                # id_row, _teams, _home, _away, _ftime, _lname, _streams, _logo_league, _date
+                i.setIdRow(ri)
+                sr.append(i) #EventData(ri, d['teams'], d['home'], d['away'], d['ftime'], d['lname'], d['streams'], d['logo_league'], d['datee'],d['event_image'],d['logoImage']))
+                ri = ri + 1
+            else:
+                # delete the associated data
+                try:
+                    os.remove(profile_dir + i.getEventImage()) # d['event_image'])
+                except:
+                    log(i.getEventImage() + ' not found')    
+        if len(sr):
+            d_r.append(sr)
+
+        data_rows = d_r
+    pass
+
+def get_calendar_events():
+    data_r = []
+
+    id_row = 0
+    # Initialize with next week games for major leagues
+    #xbmc.log(str(soccer_data.serie_a_next_turn()), xbmc.LOGERROR)
+    if len(data_r) == 0:
+        r = []
+        for game in soccer_data.serie_a_next_turn():
+            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'italy serie a', '', 'serie a', game['date']) )
+        data_r.append(r)
+        id_row = id_row + 1
+        r = []
+        for game in soccer_data.premier_league_next_turn():
+            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'england premier league', '', 'premier league', game['date']) )
+        data_r.append(r)
+        id_row = id_row + 1
+        r = []
+        for game in soccer_data.la_liga_next_turn():
+            r.append( EventData(id_row, '', game['home'], game['away'], game['time'], 'spain la liga', '', 'la liga', game['date']) )
+        data_r.append(r)
+        id_row = id_row + 1
     
+    return data_r
+
+def sort_data_events(data_r):   
+    # SORT data_row
+    #re.search(sort_priority[i_sort], r[0].getLname().lower())
+    data_r2 = []
+    for a in accepted_league:
+        filtered_row = []
+        accepted = False
+        for r in data_r:
+            i_i = 0
+            accepted = False
+            for i in r:
+                # Accept only selected events
+                if a in i.getLname().lower():
+                    accepted = True
+                if accepted:
+                    filtered_row.append(i)
+            if accepted:
+                break
+        if accepted:
+            data_r2.append(filtered_row)
+    
+    return data_r2
+
 if (__name__ == '__main__'):
     #######################################
     # Time and Date Helpers
@@ -1255,12 +1368,19 @@ if (__name__ == '__main__'):
     query = None
     
     #try:
-    if mode == 999: #None:
-        Main_menu()
-    elif mode == None:
+    if mode == None:
         # Splash
         splash.show()
-     
+
+        # Init data rows
+        data_rows.clear()
+
+        # Get calendar data
+        data_rows = get_calendar_events()
+
+        # Get new event data
+        data_rws = get_events(Live_url)
+
         # Addon data dir
         profile_dir = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
      
@@ -1268,15 +1388,11 @@ if (__name__ == '__main__'):
         text = ''
         with closing(xbmcvfs.File(profile_dir + '/data.dat','r')) as fo:
             text = fo.read()
-        
-        if text != '':
+
+        if False: #text != '':
             # Load json data
             d_r = []
             d_r = json.loads(text)
-            # Is data up to date?
-            # Y
-            
-            # Draw data
             ri = 0
             for r in d_r:
                 ss = json.loads(r)
@@ -1285,19 +1401,76 @@ if (__name__ == '__main__'):
                     ed = json.loads(i)
                     #log(ed)
                     d =  json.loads(ed)
-                    #"teams": "Hellas Verona - Napoli", "ftime": "15:00", "lname": "italy serie a", "streams": "not available yet", "logo_league": "serie a", "onlyleague": "", "datee": "2023-10-21"}
                     # id_row, _teams, _home, _away, _ftime, _lname, _streams, _logo_league, _date
                     sr.append(EventData(ri, d['teams'], d['home'], d['away'], d['ftime'], d['lname'], d['streams'], d['logo_league'], d['datee'],d['event_image'],d['logoImage']))
                 ri = ri + 1
                 data_rows.append(sr)
-            
+
+            # Is data up to date?
+            purge_data_rows()
+
+            # Integrate with new events
+            for r in data_rws:
+                for event in r:
+                    found = False
+                    # For every event, search inside data_rows event
+                    for dr in data_rows:
+                        for d_event in dr:
+                            if event.getHome() in d_event.getHome():
+                                # update streams
+                                d_event.setStreams(event.getStreams())
+                                found = True
+                                break
+                        if found == True:
+                            break
+                    if found == False:
+                        # Add it to the appropriate row
+                        for adr in data_rows:
+                            if len(adr) > 0 and adr[0].getLname() in event.getLname():
+                                adr.insert(0, event)
+
+                
         else:
             # Empty data: get events
-            get_events(Live_url)
+            #data_rows = data_rws
             #set_dummy_data()
+
+            # Is data up to date?
+            purge_data_rows()
+
+            # Integrate with new events
+            for r in data_rws:
+                for event in r:
+                    found = False
+                    # For every event, search inside data_rows event
+                    for dr in data_rows:
+                        for d_event in dr:
+                            if event.getHome() in d_event.getHome():
+                                # update streams
+                                d_event.setStreams(event.getStreams())
+                                found = True
+                                break
+                        if found == True:
+                            break
+                    if found == False:
+                        # Add it to the appropriate row
+                        for adr in data_rows:
+                            if len(adr) > 0 and adr[0].getLname() in event.getLname():
+                                adr.insert(0, event)
+                                found = True
+                                break
+                    if found == False:
+                        # Add a new row with this event
+                        new_r = []
+                        new_r.append(event)
+                        data_rows.append(new_r)
+                    
+
+
+            data_rows = sort_data_events(data_rows)
             
-            # Save events
-            save_events_data()
+        # Save events
+        save_events_data()
 
         postEvents()
         mode = 21

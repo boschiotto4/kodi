@@ -1,0 +1,29 @@
+<fonts>
+	<fontset id="Default" idloc="31390" unicode="true"> 
+	<!-- Normal Fonts -->
+	 	<font>
+			<name>font12</name>
+			<filename>DejaVuSans.ttf</filename>
+			<size>16</size>
+		</font>
+	 	<font>
+			<name>font12caps</name>
+			<filename>DefaultCaps.ttf</filename>
+			<size>16</size>
+		</font>
+	 	<font>
+			<name>font13</name>
+			<filename>DejaVuSans.ttf</filename>
+			<size>20</size>
+		</font>
+		<font>
+			<name>font32</name>
+			<filename>arial.ttf</name>
+			<size>12</size>
+			<style>uppercase lowercase capitalize bold lighten</style>
+			<aspect>0.75</aspect>
+			<linespacing>1.0</linespacing>
+		</font>
+  </fontset>
+
+</fonts>

@@ -81,6 +81,7 @@ class GetData:
     def get_scheduling(self):
 #        raw_response = self.soup.find_all('th', {'data-stat': 'gameweek'})
         ret = []
+        gameWeekId = ''
         raw_response = self.soup.find_all('td', {'data-stat': 'date'})
         # Search for the next 4 days match
         today = datetime.now()
