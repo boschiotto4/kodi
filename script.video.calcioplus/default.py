@@ -257,6 +257,92 @@ class GUI(xbmcgui.WindowXML):
         self.gui_rows[row].setVisible(True)
         pass
 
+    def searchImageByDesc(self, desc,isLogo=False,r=-1,i=-1,flname=''):
+
+        # ASYNC REQUEST
+        t1 = threading.Thread(target=lambda: self.searchImageByDescAsync(desc,isLogo,r,i,flname))
+        #Background thread will finish with the main program
+        t1.setDaemon(True)
+        t1.start()
+        pass
+
+    def searchImageByDescAsync(self, desc, isLogo=False,r=-1,i=-1,flname=''):
+        global data_rows
+        urls = []
+
+        try:
+            if isLogo:
+                re = requests.get("https://api.qwant.com/v3/search/images",
+                    params={
+                        'count': 1,
+                        'q': desc,
+                        't': 'images',
+                        'safesearch': 1,
+                        'locale': 'it_IT',
+                        'offset': 0,
+                        'device': 'desktop'
+    #                    'image-size':'small'
+                    },
+                    headers={
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64 rv:94.0) Gecko/20100101 Firefox/94.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+                    }
+                )
+            else:
+                re = requests.get("https://api.qwant.com/v3/search/images",
+                    params={
+                        'count': 1,
+                        'q': desc,
+                        't': 'images',
+                        'safesearch': 1,
+                        'locale': 'it_IT',
+                        'offset': 0,
+                        'device': 'desktop',
+                        'freshness': 'year'
+                    },
+                    headers={
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64 rv:94.0) Gecko/20100101 Firefox/94.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+                    }
+                )
+            
+            response = re.json().get('data').get('result').get('items')
+            urls = [re.get('media') for re in response]
+            #xbmc.log(str(urls[0]), xbmc.LOGERROR)
+        except:
+            log('error qwant img')
+            urls = None
+
+        try:
+            if (False == isLogo):
+                if urls != None and len(urls) > 0:
+                    if is_url_image(urls[0]):
+                        # download
+                        response = requests.get(urls[0])
+                        fname = str(abs(hash(urls[0])))
+                        with open(profile_dir + 'events/' + fname, "wb") as f:
+                            f.write(response.content)
+                        data_rows[r][i].setEventImage('events/' + fname)
+                        self.lists[r][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
+                        save_events_data()
+            else:
+                if False or urls != None and len(urls) > 0:
+                    # save
+                    response = requests.get(urls[0])
+                    with open(profile_dir + flname + "_org", "wb") as f:
+                        f.write(response.content)
+                    
+                    # load
+                    im = Image.open(profile_dir + flname + "_org") 
+                    newsize = (128, 128)
+                    im = im.resize(newsize)#, Resampling.BICUBIC)
+                    im.save(profile_dir + flname) 
+
+                    data_rows[r][i].setLogoImage(flname)
+                    self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
+        except:
+            log('error appling img')
+
+        pass
+
     def applyContextualImages(self):
         global data_rows
         
@@ -279,21 +365,12 @@ class GUI(xbmcgui.WindowXML):
                 else:
                     # else, look for it in the web
                     a = urlparse(mydata.getLogo_league())
-                    #xbmc.log(str(a.path), xbmc.LOGERROR)
+                    
+                    # ASYNC SEARCH
                     if 'football' in a.path:
-                        urls = searchImageByDesc(mydata.getTeams() + ' ' + ' site:www.goal.com')
+                        self.searchImageByDesc(mydata.getTeams() + ' ' + ' site:www.goal.com', False, r, i, '')
                     else:
-                        urls = searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLeagueName())
-                    if urls != None and len(urls) > 0:
-                        if is_url_image(urls[0]):
-                            # download
-                            response = requests.get(urls[0])
-                            fname = str(abs(hash(urls[0])))
-                            with open(profile_dir + 'events/' + fname, "wb") as f:
-                                f.write(response.content)
-                            data_rows[r][i].setEventImage('events/' + fname)
-                            self.lists[r][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
-                            save_events_data()
+                        self.searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLeagueName(), False, r, i, '')
 
                 # Apply contextual image if present
                 flname = 'leagues/' + mydata.getOnlyLeagueName() + '.png'
@@ -301,21 +378,7 @@ class GUI(xbmcgui.WindowXML):
                     self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
                     data_rows[r][i].setLogoImage(flname)
                 else:
-                    urls = searchImageByDesc(mydata.getOnlyLeagueName() + ' logo png',True)
-                    if urls != None and len(urls) > 0:
-                        # download
-                        response = requests.get(urls[0])
-                        with open(profile_dir + flname, "wb") as f:
-                            f.write(response.content)
-                        
-                        im = Image.open(profile_dir + flname) 
-                        newsize = (128, 128)
-                        im = im.resize(newsize)#, Resampling.BICUBIC)
-                        im.save(profile_dir + flname) 
- 
-
-                        data_rows[r][i].setLogoImage(flname)
-                        self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
+                    self.searchImageByDesc(mydata.getOnlyLeagueName() + ' logo png',True, r, i, flname)
         pass
         
     def onAction(self, action):
@@ -457,50 +520,6 @@ def is_url_image(image_url):
         return False
     return False
 
-def searchImageByDesc(desc,isLogo=False):
-    urls = []
-    try:
-        if isLogo:
-            r = requests.get("https://api.qwant.com/v3/search/images",
-                params={
-                    'count': 1,
-                    'q': desc,
-                    't': 'images',
-                    'safesearch': 1,
-                    'locale': 'it_IT',
-                    'offset': 0,
-                    'device': 'desktop'
-#                    'image-size':'small'
-                },
-                headers={
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64 rv:94.0) Gecko/20100101 Firefox/94.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
-                }
-            )
-        else:
-            r = requests.get("https://api.qwant.com/v3/search/images",
-                params={
-                    'count': 1,
-                    'q': desc,
-                    't': 'images',
-                    'safesearch': 1,
-                    'locale': 'it_IT',
-                    'offset': 0,
-                    'device': 'desktop',
-                    'freshness': 'year'
-                },
-                headers={
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64 rv:94.0) Gecko/20100101 Firefox/94.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
-                }
-            )
-        
-        response = r.json().get('data').get('result').get('items')
-        urls = [r.get('media') for r in response]
-        #xbmc.log(str(urls[0]), xbmc.LOGERROR)
-    except:
-        log('error qwant img')
-        urls = None
-    return urls
-
 # GUI EVENTs
 def move_left():
     global item_sel
@@ -624,7 +643,8 @@ def draw_page():
             ui.setFocus(ui.gui_rows[i])
             item_selected[1] = i
             break
-    log(filter)
+    #log(filter)
+
     ui.applyContextualImages()
     pass
 
@@ -741,10 +761,6 @@ def get_livetv(url):
 
         addDir(chan, stream, 100, ICON, FANART, name)
 
-
-#xbmcplugin.setContent(int(sys.argv[1]), 'videos')
-
-
 def get_new_events(url):# 15
     #import requests
     data = six.ensure_text(client.request(url, headers=headers))
@@ -794,9 +810,6 @@ def get_new_events(url):# 15
             event = ftime + ' [COLOR gold][B]{}[/COLOR][/B]'.format(event.replace('\t', ''))
 
             addDir(event, streams, 4, ICON, FANART, name)
-
-
-#xbmcplugin.setContent(int(sys.argv[1]), 'videos')
 
 def get_stream(url):  # 4
     
