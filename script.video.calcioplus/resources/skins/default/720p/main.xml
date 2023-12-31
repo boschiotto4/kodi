@@ -222,7 +222,7 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
 				<control type="image">
@@ -235,10 +235,11 @@
 				</control>
 				<control type="label">
 					<left>20</left>
-					<top>0</top>
+					<top>4</top>
 					<height>30</height>
 					<width>380</width>
 					<font>font10</font>
+					<textcolor>FF000000</textcolor>
 					<label>$INFO[ListItem.Art(landscape)]</label>
 				</control>
 				<control type="image">
@@ -309,9 +310,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -331,10 +349,11 @@
 				</control>
 				<control type="label">
 					<left>20</left>
-					<top>0</top>
+					<top>4</top>
 					<height>30</height>
 					<width>380</width>
 					<font>font10</font>
+					<textcolor>FF000000</textcolor>
 					<label>$INFO[ListItem.Art(landscape)]</label>
 				</control>
 				<control type="image">
@@ -413,9 +432,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
-				</control>	
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -484,9 +520,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -571,9 +624,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -642,9 +712,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -729,9 +816,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -800,9 +904,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -887,9 +1008,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -958,9 +1096,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1045,9 +1200,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1116,9 +1288,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1203,9 +1392,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1274,9 +1480,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1361,9 +1584,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1432,9 +1672,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1519,9 +1776,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1590,9 +1864,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1677,9 +1968,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>
@@ -1748,9 +2056,26 @@
 					<top>130</top>
 					<width>380</width>
 					<height>90</height>
-					<colordiffuse>AA000000</colordiffuse>
+					<colordiffuse>DC000000</colordiffuse>
 					<texture>icons/bw.png</texture>
 				</control>	
+				<control type="image">
+					<left>0</left>
+					<top>0</top>
+					<width>380</width>
+					<height>30</height>
+					<colordiffuse>$INFO[ListItem.Art(poster)]</colordiffuse>
+					<texture>icons/bw.png</texture>
+				</control>
+				<control type="label">
+					<left>20</left>
+					<top>4</top>
+					<height>30</height>
+					<width>380</width>
+					<font>font10</font>
+					<textcolor>FF000000</textcolor>
+					<label>$INFO[ListItem.Art(landscape)]</label>
+				</control>
 				<control type="image">
 					<left>0</left>
 					<top>190</top>

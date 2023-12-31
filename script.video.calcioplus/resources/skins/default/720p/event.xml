@@ -58,7 +58,7 @@
 				<top>324</top>
 				<width>104</width>
 				<height>104</height>
-				<texture>icons/empty.png</texture>
+				<texture>icons/b1.png</texture>
 			</control>
 			<control type="label" id="213">
 				<left>20</left>

@@ -125,8 +125,10 @@ class EVENT(xbmcgui.WindowXMLDialog):
         bg = self.getControl(212)
         bg.setImage(profile_dir + self.item.getEventImage())
 
+        self.sel = 0
         bgl = self.getControl(216)
-        bgl.setImage(profile_dir + self.item.getLogoImage())
+        if 'b1.png' not in self.item.getLogoImage():
+            bgl.setImage(profile_dir + self.item.getLogoImage())
 
         tit = self.getControl(213)
         hour = self.getControl(214)
@@ -140,7 +142,7 @@ class EVENT(xbmcgui.WindowXMLDialog):
         self.appendList(self.lst)
 
         xbmc.executebuiltin('Control.SetFocus(10)')
-        if len(self.lst > 0):
+        if len(self.lst) > 0:
             self.lnk.setLabel(self.lst[0])
         pass
 
@@ -150,7 +152,7 @@ class EVENT(xbmcgui.WindowXMLDialog):
         elif action.getId() == xbmcgui.ACTION_MOVE_LEFT:
             self.sel = self.sel - 1
             if self.sel < 0:
-                self.sel = len(self.lst - 1)
+                self.sel = len(self.lst) - 1
             self.lnk.setLabel(self.lst[self.sel])
         elif action.getId() == xbmcgui.ACTION_MOVE_RIGHT:
             self.sel = self.sel + 1
@@ -163,7 +165,7 @@ class EVENT(xbmcgui.WindowXMLDialog):
             resolve(u[1].strip(), self.item.getTeams().upper())#u[0].strip())
             self.close()
         else:
-            super(GUI, self).onAction(action)
+            super(EVENT, self).onAction(action)
 
     def appendList(self, lst):
         # Set links
@@ -238,8 +240,10 @@ class GUI(xbmcgui.WindowXML):
         #for i in range(0, 10):
         listitem = xbmcgui.ListItem()
         listitem.setInfo( type="Video", infoLabels={ "Title": "" + _data.getTeams().upper() + "", "OriginalTitle": "" + _data.getFtime() + "", "Album": "" + _data.getEventImage() + "" }   )
-        if _data.getDate().lower() != 'today':
-            listitem.setArt({ 'poster' : 'FF000000'})
+        today = dt.today()
+        tdy = today.strftime("%Y-%m-%d")
+        if _data.getDate().lower().strip() != tdy:
+            listitem.setArt({ 'poster' : 'BBFFFF00'})
             listitem.setArt({ 'landscape' : _data.getDate()})
         else:
             listitem.setArt({ 'poster' : '00000000'})
@@ -322,7 +326,8 @@ class GUI(xbmcgui.WindowXML):
                             f.write(response.content)
                         data_rows[r][i].setEventImage('events/' + fname)
                         self.lists[r][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
-                        save_events_data()
+                    
+                    save_events_data()
             else:
                 if False or urls != None and len(urls) > 0:
                     # save
@@ -512,7 +517,7 @@ class EventData():
 # Engine 
 def is_url_image(image_url):
     try:
-        image_formats = ("image/png", "image/jpeg", "image/jpg")
+        image_formats = ("image/png", "image/jpg")
         r = requests.head(image_url)
         if r.headers["content-type"] in image_formats:
             return True
@@ -1399,8 +1404,10 @@ def sort_data_events(data_r):
             if accepted:
                 break
         if accepted:
+            # Order each row by date
+            filtered_row.reverse()
             data_r2.append(filtered_row)
-    
+        
     return data_r2
 
 if (__name__ == '__main__'):
