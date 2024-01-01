@@ -223,6 +223,17 @@ class GUI(xbmcgui.WindowXML):
        
         pass
 
+    def cleanData(self):
+        self.data.clear()
+        self.lists.clear()
+        for r in range(0, 10):
+            empty_list = []
+            empty_data = []
+            self.lists.append(empty_list)
+            self.data.append(empty_data)
+            self.getControl(r * 10 + 10).setVisible(False)
+        pass
+
     def isInited(self):
         if len(self.lists) < 10:
             return False
@@ -239,7 +250,7 @@ class GUI(xbmcgui.WindowXML):
     def addQuad(self, row, _data):      
         #for i in range(0, 10):
         listitem = xbmcgui.ListItem()
-        listitem.setInfo( type="Video", infoLabels={ "Title": "" + _data.getTeams().upper() + "", "OriginalTitle": "" + _data.getFtime() + "", "Album": "" + _data.getEventImage() + "" }   )
+        listitem.setInfo( type="Video", infoLabels={ "Title": "[B]" + _data.getTeams().upper() + "[/B]", "OriginalTitle": "" + _data.getFtime() + "", "Album": "" + _data.getEventImage() + "" }   )
         today = dt.today()
         tdy = today.strftime("%Y-%m-%d")
         if _data.getDate().lower().strip() != tdy:
@@ -315,36 +326,44 @@ class GUI(xbmcgui.WindowXML):
             log('error qwant img')
             urls = None
 
-        try:
-            if (False == isLogo):
-                if urls != None and len(urls) > 0:
-                    if is_url_image(urls[0]):
-                        # download
-                        response = requests.get(urls[0])
-                        fname = str(abs(hash(urls[0])))
-                        with open(profile_dir + 'events/' + fname, "wb") as f:
-                            f.write(response.content)
-                        data_rows[r][i].setEventImage('events/' + fname)
-                        self.lists[r][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
-                    
-                    save_events_data()
-            else:
-                if False or urls != None and len(urls) > 0:
-                    # save
+        #try:
+        if (False == isLogo):
+            if urls != None and len(urls) > 0:
+                if is_url_image(urls[0]):
+                    # download
                     response = requests.get(urls[0])
-                    with open(profile_dir + flname + "_org", "wb") as f:
+                    fname = str(abs(hash(urls[0])))
+                    with open(profile_dir + 'events/' + fname + "_org", "wb") as f:
                         f.write(response.content)
-                    
-                    # load
-                    im = Image.open(profile_dir + flname + "_org") 
-                    newsize = (128, 128)
-                    im = im.resize(newsize)#, Resampling.BICUBIC)
-                    im.save(profile_dir + flname) 
 
-                    data_rows[r][i].setLogoImage(flname)
-                    self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
-        except:
-            log('error appling img')
+                    # load
+                    im = Image.open(profile_dir + 'events/' + fname + "_org") 
+                    newsize = (380, 220)
+                    im = im.resize(newsize, resample = Image.HAMMING)
+                    fname = fname + '.jpeg'
+                    im.save(profile_dir + 'events/' + fname) 
+
+                    data_rows[r][i].setEventImage('events/' + fname)
+                    self.lists[r][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
+                
+                save_events_data()
+        else:
+            if False or urls != None and len(urls) > 0:
+                # save
+                response = requests.get(urls[0])
+                with open(profile_dir + flname, "wb") as f:
+                    f.write(response.content)
+                
+                # load
+                im = Image.open(profile_dir + flname) 
+                newsize = (128, 128)
+                im = im.resize(newsize)#, Resampling.BICUBIC)
+                im.save(profile_dir + flname) 
+
+                data_rows[r][i].setLogoImage(flname)
+                self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
+        #except:
+        #    log('error appling img')
 
         pass
 
@@ -365,6 +384,11 @@ class GUI(xbmcgui.WindowXML):
                 mydata = self.data[r][i]
                 
                 # If preset, apply it...
+                log("boschi")
+                log(len(data_rows))
+                log(r)
+                log(i)
+                log(len(data_rows[r]))
                 if data_rows[r][i].getEventImage() != 'icons/b1.png':
                     self.lists[r][i].setArt({ 'thumb' : profile_dir + data_rows[r][i].getEventImage()})
                 else:
@@ -419,17 +443,17 @@ class GUI(xbmcgui.WindowXML):
         if controlId == 202:
             refresh('serie a')
         if controlId == 203:
-            refresh('premier')
+            refresh('league')
         if controlId == 204:
-            refresh('la liga')
+            refresh('premier')
         if controlId == 205:
-            refresh('bundesliga')
+            refresh('la liga')
         if controlId == 206:
             refresh('ligue 1')
         if controlId == 207:
             refresh('update')
         pass
-        
+    
     def onFocus(self, controlId):
         global id_row       
         #super(GUI, self).onFocus(controlId)
@@ -517,7 +541,7 @@ class EventData():
 # Engine 
 def is_url_image(image_url):
     try:
-        image_formats = ("image/png", "image/jpg")
+        image_formats = ("image/png", "image/jpeg", "image/jpg")
         r = requests.head(image_url)
         if r.headers["content-type"] in image_formats:
             return True
@@ -667,8 +691,6 @@ def convDateUtil(timestring, newfrmt='default', in_zone='UTC'):
         return timestring
 
 def get_events(url):  # 5
-    #xbmc.log('%s: {}'.format(url))
-    #xbmc.log(url, xbmc.LOGERROR)
     global soccer_data
     global id_row
 
@@ -679,13 +701,13 @@ def get_events(url):  # 5
     data = client.request(url)
     data = six.ensure_text(data, encoding='utf-8', errors='ignore')
     data = re.sub('\t', '', data)
-    # xbmc.log('@#@EDATAAA: {}'.format(data))
+
     events = list(zip(client.parseDOM(data, 'li', attrs={'class': "item itemhov"}),
                       client.parseDOM(data, 'li', attrs={'class': "bahamas"})))
                       # re.findall(r'class="bahamas">(.+?)</span> </div> </li>', str(data), re.DOTALL)))
     # addDir('[COLORwhite]Time in GMT+2[/COLOR]', '', 'BUG', ICON, FANART, '')
     for event, streams in events:
-        log(event)
+        #log(event)
         # xbmc.log('@#@EVENTTTTT:%s' % event)
         # xbmc.log('@#@STREAMS:%s' % streams)
         watch = '[COLORlime]*[/COLOR]' if '>Live<' in event else '[COLORred]*[/COLOR]'
@@ -1231,16 +1253,8 @@ def set_dummy_data():
     
 def postEvents(): 
     global ui
-    #xbmc.executebuiltin('Dialog.Close(busydialog)')
-    
-    #global base
-    #base.close()
-    #del base
-    
-    ui = GUI('main.xml', ADDON_PATH, 'default', '720p', False, optional1='some data')
 
-    #ui.addQuad(0)
-    #refresh_selection()
+    ui = GUI('main.xml', ADDON_PATH, 'default', '720p', False, optional1='some data')
     
     load_quads()
     
@@ -1265,12 +1279,11 @@ def refresh(_type):
         ui.gui_rows[id].setVisible(False)
         id = id + 1
     item_selected = [0, -1]
-    
+
     # Apply the filter
-    if _type == 'update':
-        data_rows.clear()
-        data_rows = []
-        get_events(Live_url)
+    if _type == 'update' or _type == 'all':
+        ui.cleanData()
+        refresh_all()
         filter = 'all'
     else:
         filter = _type
@@ -1410,6 +1423,65 @@ def sort_data_events(data_r):
         
     return data_r2
 
+def refresh_all():
+    global data_rows
+    global ui
+
+    # Init data rows
+    data_rows.clear()
+
+    # Get calendar data
+    calendar_rows = get_calendar_events()
+
+    # Get new event data
+    data_rws = get_events(Live_url)
+
+    # Addon data dir
+    profile_dir = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
+    
+    # Check if data exist
+    text = ''
+    with closing(xbmcvfs.File(profile_dir + '/data.dat','r')) as fo:
+        text = fo.read()
+
+    if text != '':
+        # Load json dat
+        d_r = []
+        d_r = json.loads(text)
+        ri = 0
+        for r in d_r:
+            ss = json.loads(r)
+            sr = []
+            for i in ss:
+                ed = json.loads(i)
+                #log(ed)
+                d =  json.loads(ed)
+                # id_row, _teams, _home, _away, _ftime, _lname, _streams, _logo_league, _date
+                sr.append(EventData(ri, d['teams'], d['home'], d['away'], d['ftime'], d['lname'], d['streams'], d['logo_league'], d['datee'],d['event_image'],d['logoImage']))
+            ri = ri + 1
+            data_rows.append(sr)
+
+    # Is data up to date? Part 1
+    purge_data_rows()
+
+    # Integrate with new events from calendar
+    if calendar_rows != '':
+        integrate_data_rows_with(calendar_rows, False)
+
+    # Integrate with new available events
+    if data_rws != '':
+        integrate_data_rows_with(data_rws, True)
+
+    # Is data up to date? Part 2 
+    purge_data_rows()
+
+    data_rows = sort_data_events(data_rows)
+        
+    # Save events
+    save_events_data()
+    pass
+
+
 if (__name__ == '__main__'):
     #######################################
     # Time and Date Helpers
@@ -1433,69 +1505,20 @@ if (__name__ == '__main__'):
     query = None
     
     #try:
-    if mode == None:
-        # Splash
-        splash.show()
+    # Splash
+    splash.show()
 
-        # Init data rows
-        data_rows.clear()
+    # Refresh view
+    refresh_all()
 
-        # Get calendar data
-        calendar_rows = get_calendar_events()
-
-        # Get new event data
-        data_rws = get_events(Live_url)
-
-        # Addon data dir
-        profile_dir = xbmcvfs.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
-     
-        # Check if data exist
-        text = ''
-        with closing(xbmcvfs.File(profile_dir + '/data.dat','r')) as fo:
-            text = fo.read()
-
-        if text != '':
-            # Load json data
-            d_r = []
-            d_r = json.loads(text)
-            ri = 0
-            for r in d_r:
-                ss = json.loads(r)
-                sr = []
-                for i in ss:
-                    ed = json.loads(i)
-                    #log(ed)
-                    d =  json.loads(ed)
-                    # id_row, _teams, _home, _away, _ftime, _lname, _streams, _logo_league, _date
-                    sr.append(EventData(ri, d['teams'], d['home'], d['away'], d['ftime'], d['lname'], d['streams'], d['logo_league'], d['datee'],d['event_image'],d['logoImage']))
-                ri = ri + 1
-                data_rows.append(sr)
-
-        # Is data up to date? Part 1
-        purge_data_rows()
-
-        # Integrate with new events from calendar
-        integrate_data_rows_with(calendar_rows, False)
-
-        # Integrate with new available events
-        integrate_data_rows_with(data_rws, True)
-
-        # Is data up to date? Part 2 
-        purge_data_rows()
-
-        data_rows = sort_data_events(data_rows)
-            
-        # Save events
-        save_events_data()
-
-        postEvents()
-        mode = 21
+    postEvents()
+    mode = 21
 #    elif mode == 4:
 #        get_stream(url)
-    elif mode == 10:
-        Open_settings()
-    elif mode == 100:
-        resolve(url, name)
+#    elif mode == 10:
+#        Open_settings()
+#    elif mode == 100:
+#        resolve(url, name)
     #except:
     #    control.infoDialog("[COLOR red]Generic error. Please check the connection. Try Again Later![/COLOR]", NAME,
 
