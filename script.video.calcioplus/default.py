@@ -272,16 +272,16 @@ class GUI(xbmcgui.WindowXML):
         self.gui_rows[row].setVisible(True)
         pass
 
-    def searchImageByDesc(self, desc,isLogo=False,r=-1,i=-1,flname=''):
+    def searchImageByDesc(self, desc,isLogo=False,r=-1,i=-1,row=0,flname=''):
 
         # ASYNC REQUEST
-        t1 = threading.Thread(target=lambda: self.searchImageByDescAsync(desc,isLogo,r,i,flname))
+        t1 = threading.Thread(target=lambda: self.searchImageByDescAsync(desc,isLogo,r,i,row,flname))
         #Background thread will finish with the main program
         t1.setDaemon(True)
         t1.start()
         pass
 
-    def searchImageByDescAsync(self, desc, isLogo=False,r=-1,i=-1,flname=''):
+    def searchImageByDescAsync(self, desc, isLogo=False,r=-1,i=-1,row=0,flname=''):
         global data_rows
         urls = []
 
@@ -340,11 +340,11 @@ class GUI(xbmcgui.WindowXML):
                     im = Image.open(profile_dir + 'events/' + fname + "_org") 
                     newsize = (380, 220)
                     im = im.resize(newsize, resample = Image.HAMMING)
-                    fname = fname + '.jpeg'
+                    fname = fname + '.png'
                     im.save(profile_dir + 'events/' + fname) 
 
                     data_rows[r][i].setEventImage('events/' + fname)
-                    self.lists[r][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
+                    self.lists[row][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
                 
                 save_events_data()
         else:
@@ -361,7 +361,7 @@ class GUI(xbmcgui.WindowXML):
                 im.save(profile_dir + flname) 
 
                 data_rows[r][i].setLogoImage(flname)
-                self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
+                self.lists[row][i].setArt({ 'clearlogo' : profile_dir + flname})
         #except:
         #    log('error appling img')
 
@@ -376,40 +376,56 @@ class GUI(xbmcgui.WindowXML):
         if not os.path.exists(profile_dir + 'leagues/'):
             os.makedirs(profile_dir + 'leagues/')
 
-        # Apply contextual image if present   
-        for r in range(0, len(self.data)):
-            for i in range(0, len(self.data[r])):
-                urls = []
-                
-                mydata = self.data[r][i]
-                
-                # If preset, apply it...
-                log("boschi")
-                log(len(data_rows))
-                log(r)
-                log(i)
-                log(len(data_rows[r]))
-                if data_rows[r][i].getEventImage() != 'icons/b1.png':
-                    self.lists[r][i].setArt({ 'thumb' : profile_dir + data_rows[r][i].getEventImage()})
-                else:
-                    # else, look for it in the web
-                    a = urlparse(mydata.getLogo_league())
-                    
-                    # ASYNC SEARCH
-                    if 'football' in a.path:
-                        self.searchImageByDesc(mydata.getTeams() + ' ' + ' site:www.goal.com', False, r, i, '')
-                    else:
-                        self.searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLeagueName(), False, r, i, '')
+        row = 0
+        for r in range(0, len(data_rows)):
+            # Draw filtered content
+            if filter == 'all':
+                for i in range(0, len(data_rows[r])):
+                    self.imageQuad(r, i, row)
+                row = row + 1
+            elif filter in data_rows[r][0].getLeagueName().lower():
+                for i in range(0, len(data_rows[r])):
+                    self.imageQuad(r, i, row)
+                row = row + 1
 
-                # Apply contextual image if present
-                flname = 'leagues/' + mydata.getOnlyLeagueName() + '.png'
-                if os.path.exists(profile_dir + flname): #data_rows[r][i].getLogoImage() != 'icons/empty.png':
-                    self.lists[r][i].setArt({ 'clearlogo' : profile_dir + flname})
-                    data_rows[r][i].setLogoImage(flname)
-                else:
-                    self.searchImageByDesc(mydata.getOnlyLeagueName() + ' logo png',True, r, i, flname)
+#        # Apply contextual image if present   
+#        for r in range(0, len(self.data)):
+#            for i in range(0, len(self.data[r])):
+#                self.imageQuad(r, i)
         pass
+
+    def imageQuad(self, r, i, row):
+        urls = []
         
+        mydata = self.data[r][i]
+        
+        # If preset, apply it...
+        #log("boschi")
+        #log("data_rows:" + str(len(data_rows)))
+        #log("r: " + str(r))
+        #log("i: " + str(i))
+        #log("len row: " + str(len(data_rows[r])))
+        if data_rows[r][i].getEventImage() != 'icons/b1.png':
+            self.lists[row][i].setArt({ 'thumb' : profile_dir + data_rows[r][i].getEventImage()})
+        else:
+            # else, look for it in the web
+            a = urlparse(mydata.getLogo_league())
+            
+            # ASYNC SEARCH
+            if 'football' in a.path:
+                self.searchImageByDesc(mydata.getTeams() + ' ' + ' site:www.goal.com', False, r, i,row, '')
+            else:
+                self.searchImageByDesc(mydata.getTeams() + ' ' + mydata.getLeagueName(), False, r, i,row, '')
+
+        # Apply contextual image if present
+        flname = 'leagues/' + mydata.getOnlyLeagueName() + '.png'
+        if os.path.exists(profile_dir + flname): #data_rows[r][i].getLogoImage() != 'icons/empty.png':
+            self.lists[row][i].setArt({ 'clearlogo' : profile_dir + flname})
+            data_rows[r][i].setLogoImage(flname)
+        else:
+            self.searchImageByDesc(mydata.getOnlyLeagueName() + ' logo png',True, r, i,row, flname)
+        pass    
+
     def onAction(self, action):
 
         if self.ignore_action_later == True:
@@ -637,7 +653,6 @@ def load_quads():
     t1.setDaemon(True)
     t1.start()
     pass
-   
 
 #Routine that processes whatever you want as background
 def load_quads_backgroundWorker(): 
@@ -1313,7 +1328,7 @@ def integrate_data_rows_with(_data_rws, update_streams = True):
             # For every event, search inside data_rows event
             for dr in data_rows:
                 for d_event in dr:
-                    if event.getHome() in d_event.getHome():
+                    if filterTeams(event.getHome()) in filterTeams(d_event.getHome()):
                         # update streams
                         if update_streams:
                             d_event.setStreams(event.getStreams())
@@ -1335,6 +1350,11 @@ def integrate_data_rows_with(_data_rws, update_streams = True):
                 data_rows.append(new_r)
     pass
 
+def filterTeams(t):
+    log(t)
+    if "milan" in t.lower():
+        t = "milan"
+    return t.lower()
 def purge_data_rows():
     global data_rows
 
@@ -1418,10 +1438,15 @@ def sort_data_events(data_r):
                 break
         if accepted:
             # Order each row by date
-            filtered_row.reverse()
+            filtered_row = sort_by_date(filtered_row)
+            #filtered_row.reverse()
             data_r2.append(filtered_row)
         
     return data_r2
+
+def sort_by_date(lst):
+    lst.sort(key=lambda x: x.getDate(), reverse=False)
+    return lst
 
 def refresh_all():
     global data_rows
