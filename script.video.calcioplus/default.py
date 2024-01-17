@@ -295,8 +295,8 @@ class GUI(xbmcgui.WindowXML):
                         'safesearch': 1,
                         'locale': 'it_IT',
                         'offset': 0,
-                        'device': 'desktop'
-    #                    'image-size':'small'
+                        'device': 'desktop',
+    #                   'size':'small'
                     },
                     headers={
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64 rv:94.0) Gecko/20100101 Firefox/94.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
@@ -305,13 +305,14 @@ class GUI(xbmcgui.WindowXML):
             else:
                 re = requests.get("https://api.qwant.com/v3/search/images",
                     params={
-                        'count': 1,
+                        'count': 4,
                         'q': desc,
                         't': 'images',
                         'safesearch': 1,
                         'locale': 'it_IT',
                         'offset': 0,
                         'device': 'desktop',
+    #                   'size':'small',
                         'freshness': 'year'
                     },
                     headers={
@@ -329,22 +330,24 @@ class GUI(xbmcgui.WindowXML):
         #try:
         if (False == isLogo):
             if urls != None and len(urls) > 0:
-                if is_url_image(urls[0]):
-                    # download
-                    response = requests.get(urls[0])
-                    fname = str(abs(hash(urls[0])))
-                    with open(profile_dir + 'events/' + fname + "_org", "wb") as f:
-                        f.write(response.content)
+                for ur in urls:
+                    if is_url_image(ur):
+                        # download
+                        response = requests.get(ur)
+                        fname = str(abs(hash(ur)))
+                        with open(profile_dir + 'events/' + fname + "_org", "wb") as f:
+                            f.write(response.content)
 
-                    # load
-                    im = Image.open(profile_dir + 'events/' + fname + "_org") 
-                    newsize = (380, 220)
-                    im = im.resize(newsize, resample = Image.HAMMING)
-                    fname = fname + '.png'
-                    im.save(profile_dir + 'events/' + fname) 
+                        # load
+                        im = Image.open(profile_dir + 'events/' + fname + "_org") 
+                        newsize = (380, 220)
+                        im = im.resize(newsize, resample = Image.HAMMING)
+                        fname = fname + '.png'
+                        im.save(profile_dir + 'events/' + fname) 
 
-                    data_rows[r][i].setEventImage('events/' + fname)
-                    self.lists[row][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
+                        data_rows[r][i].setEventImage('events/' + fname)
+                        self.lists[row][i].setArt({ 'thumb' : profile_dir + 'events/' + fname})
+                        break
                 
                 save_events_data()
         else:
@@ -1351,7 +1354,7 @@ def integrate_data_rows_with(_data_rws, update_streams = True):
     pass
 
 def filterTeams(t):
-    log(t)
+    #log(t)
     if "milan" in t.lower():
         t = "milan"
     return t.lower()
