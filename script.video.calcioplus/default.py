@@ -445,7 +445,10 @@ class GUI(xbmcgui.WindowXML):
             move_down()
         elif action.getId() in (ADDON_ACTION_MOUSE_LEFT_CLICK, ADDON_ACTION_MOUSE_MIDDLE_CLICK, ADDON_ACTION_MOUSE_RIGHT_CLICK, ACTION_SELECT_ITEM, ACTION_MOUSE_DOUBLE_CLICK, ADDON_ACTION_TOUCH_TAP):
             if item_selected[1] >= 0:
-                get_stream(self.data[item_selected[1]][item_selected[0]].getStreams()) 
+                try:
+                    get_stream(self.data[item_selected[1]][item_selected[0]].getStreams()) 
+                except:
+                    refresh('all')
         else:
             super(GUI, self).onAction(action)
 
