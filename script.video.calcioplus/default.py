@@ -511,7 +511,7 @@ class EventData():
 
         if _date == 'today':
             today = dt.now()
-            _date = today.strftime("%Y-%m-%d")
+            _date = today.strftime("%Y-%m-%d  %H:%M")
         self.datee = _date
         self.event_image = _eventImage
         self.logoImage = _logoImage
@@ -538,7 +538,12 @@ class EventData():
     def getTeams(self):
         return self.teams
     def getFtime(self):
-        return self.ftime
+        #gd = dt.strptime(self.datee, "%Y-%m-%d %H:%M")
+        try:
+            datetime_object = dt.strptime(self.datee, "%Y-%m-%d %H:%M")
+        except TypeError:
+            datetime_object = dt(*(time.strptime(self.datee, "%Y-%m-%d %H:%M")[0:6]))
+        return dt.strftime(datetime_object, "%H:%M")
     def getEventImage(self):
         return self.event_image
     def getLogoImage(self):
@@ -546,6 +551,12 @@ class EventData():
     def getLeagueName(self):
         return self.lname
     def getDate(self):
+        try:
+            datetime_object = dt.strptime(self.datee, "%Y-%m-%d %H:%M")
+        except TypeError:
+            datetime_object = dt(*(time.strptime(self.datee, "%Y-%m-%d %H:%M")[0:6]))
+        return dt.strftime(datetime_object, "%Y-%m-%d")
+    def getTimestamp(self):
         return self.datee
     def getStreams(self):
         return self.streams
@@ -756,7 +767,7 @@ def get_events(url):  # 5
         dta = client.parseDOM(event, 'span', attrs={'class': 'gmt_m_time'}, ret = "mtime")[0]
         #log(dta)
         ffff = dt.fromtimestamp(int(dta)/1000)
-        ddate = ffff.strftime('%Y-%m-%d')
+        ddate = ffff.strftime('%Y-%m-%d %H:%M')
         #log(ddate)
         time = time.split('GMT')[0].strip()
         #log(time)
@@ -1448,7 +1459,7 @@ def sort_data_events(data_r):
     return data_r2
 
 def sort_by_date(lst):
-    lst.sort(key=lambda x: x.getDate(), reverse=False)
+    lst.sort(key=lambda x: x.getTimestamp(), reverse=False)
     return lst
 
 def refresh_all():
